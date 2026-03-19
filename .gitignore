@@ -1,0 +1,44 @@
+### Build / Target (Maven & Gradle) ###
+# Arquivos gerados automaticamente no processo de build
+target/
+build/
+
+# Exceção caso existam pastas chamadas target/build dentro de src
+!**/src/main/**/target/
+!**/src/test/**/target/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# Maven Wrapper (binário)
+.mvn/wrapper/maven-wrapper.jar
+
+### STS / Eclipse ###
+# Configurações e arquivos gerados pela IDE
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+# Arquivos de configuração do IntelliJ
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+# Configurações e diretórios de build do NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+# Configurações locais do VS Code
+.vscode/
