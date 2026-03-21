@@ -35,7 +35,7 @@ public class Freelancer implements Serializable {
     private String password;
 
     @Column(name = "is_active", nullable = false)
-    private boolean isActive;
+    private boolean active;
 
     @JoinColumn(name = "id_manager", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
@@ -51,7 +51,7 @@ public class Freelancer implements Serializable {
         this.email = email;
         this.phone = phone;
         this.password = password;
-        this.isActive = true;
+        this.active = true;
         this.manager = manager;
     }
 
@@ -100,11 +100,11 @@ public class Freelancer implements Serializable {
     }
 
     public boolean isActive() {
-        return isActive;
+        return active;
     }
 
     public void setActive(boolean active) {
-        isActive = active;
+        this.active = active;
     }
 
     public Manager getManager() {
