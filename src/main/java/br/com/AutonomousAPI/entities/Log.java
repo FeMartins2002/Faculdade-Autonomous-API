@@ -27,7 +27,7 @@ public class Log implements Serializable {
     @Enumerated(EnumType.STRING)
     private ActionType action;
 
-    @Column(name = "entity_name", nullable = false)
+    @Column(name = "entity_name")
     private String entityName;
 
     @Column(name = "entity_id")

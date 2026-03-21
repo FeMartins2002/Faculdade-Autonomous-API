@@ -29,7 +29,7 @@ public class Store implements Serializable {
     private String address;
 
     @Column(name = "is_active", nullable = false)
-    private boolean isActive;
+    private boolean active;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_manager", nullable = false)
@@ -44,7 +44,7 @@ public class Store implements Serializable {
         this.phone = phone;
         this.address = address;
         this.manager = manager;
-        this.isActive = true;
+        this.active = true;
     }
 
     public Long getId() {
@@ -76,11 +76,11 @@ public class Store implements Serializable {
     }
 
     public boolean isActive() {
-        return isActive;
+        return active;
     }
 
     public void setActive(boolean active) {
-        isActive = active;
+        this.active = active;
     }
 
     public Manager getManager() {
