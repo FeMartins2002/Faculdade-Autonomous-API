@@ -35,7 +35,7 @@ public class Scale implements Serializable {
     @Column(name = "scale_datetime", nullable = false)
     private LocalDateTime scaleDateTime;
 
-    @Column(name = "scale_observation", nullable = false)
+    @Column(name = "scale_observation")
     private String scaleObservation;
 
     @ManyToOne(fetch = FetchType.LAZY)

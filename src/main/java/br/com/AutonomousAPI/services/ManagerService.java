@@ -33,7 +33,7 @@ public class ManagerService {
                 throw new UnauthorizedException("Senha incorreta");
             }
 
-            loginSuccessfulLog(manager);
+            loginSuccessfulLog(manager.getId(), manager.getEmail());
             return managerMapper.toResponse(manager);
         }
         catch (ManagerNotFoundException ex) {
@@ -47,13 +47,13 @@ public class ManagerService {
                 .orElseThrow(() -> new ManagerNotFoundException("Manager não encontrado"));
     }
 
-    private void loginSuccessfulLog(Manager manager) {
+    private void loginSuccessfulLog(Long managerId, String managerEmail) {
         Log log = new Log(
                 ActionType.LOGIN,
                 "",
                 null,
-                manager.getId(),
-                "Login realizado com sucesso com o e-mail: " + manager.getEmail(),
+                managerId,
+                "Login realizado com sucesso com o e-mail: " + managerEmail,
                 LogStatus.SUCCESS);
         logService.createLog(log);
     }

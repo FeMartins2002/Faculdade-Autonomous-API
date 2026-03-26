@@ -9,12 +9,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("autonomous/authentication")
+@RequestMapping("/autonomous/authentication")
 public class ManagerController {
     @Autowired
     private ManagerService managerService;
 
-    @PostMapping
+    @PostMapping("/manager")
     public ResponseEntity<ManagerResponseDTO> login(@RequestBody @Valid LoginManagerDTO loginDTO) {
         ManagerResponseDTO response = managerService.login(loginDTO);
         return ResponseEntity.ok(response);

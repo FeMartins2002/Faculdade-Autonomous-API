@@ -23,11 +23,16 @@ public class StoreService {
     @Autowired
     private ManagerRepository managerRepository;
 
+    @Autowired
+    private LogService logService;
+
     public void createStore(CreateStoreDTO dto) {
         validateStore(dto);
         Manager manager = findManager(dto.getManagerId());
 
         Store store = storeMapper.toEntity(dto, manager);
+        store.setActive(true);
+
         storeRepository.save(store);
     }
 

@@ -1,6 +1,7 @@
 package br.com.AutonomousAPI.services;
 
 import br.com.AutonomousAPI.dtos.request.freelancer.CreateFreelancerDTO;
+import br.com.AutonomousAPI.dtos.response.freelancer.FreelancerResponseDTO;
 import br.com.AutonomousAPI.entities.Freelancer;
 import br.com.AutonomousAPI.entities.Manager;
 import br.com.AutonomousAPI.exceptions.CpfAlreadyRegisteredException;
@@ -14,6 +15,8 @@ import br.com.AutonomousAPI.services.utils.PasswordGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class FreelancerService {
     @Autowired
@@ -24,6 +27,19 @@ public class FreelancerService {
 
     @Autowired
     private ManagerRepository managerRepository;
+
+    @Autowired
+    private LogService logService;
+
+    public List<FreelancerResponseDTO> freelancersActives() {
+        List<Freelancer> freelancers = freelancerRepository.findByActiveTrueOrderByName();
+        return freelancerMapper.toResponseList(freelancers);
+    }
+
+    public List<FreelancerResponseDTO> freelancersInactives() {
+        List<Freelancer> freelancers = freelancerRepository.findByActiveFalseOrderByName();
+        return freelancerMapper.toResponseList(freelancers);
+    }
 
     public void createFreelancer(CreateFreelancerDTO dto) {
         validateFreelancer(dto);
