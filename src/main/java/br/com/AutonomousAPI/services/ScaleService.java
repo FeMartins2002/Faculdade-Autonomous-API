@@ -50,14 +50,15 @@ public class ScaleService {
 
     public void createScale(CreateScaleDTO dto) {
         //validateScale(dto);
-        Manager manager = findManager(dto.getManagerId());
-        Freelancer freelancer = findFreelancer(dto.getFreelancerId());
-        Store store = findStore(dto.getStoreId());
+        Manager manager = findByManager(dto.getManagerId());
+        Freelancer freelancer = findByFreelancer(dto.getFreelancerId());
+        Store store = findByStore(dto.getStoreId());
 
         Scale scale = scaleMapper.toEntity(dto, manager, freelancer, store);
-        createScaleSuccessfulLog(scale.getId(), manager.getId());
+        scale.setScaleStatus(ScaleStatus.CRIADO);
 
         scaleRepository.save(scale);
+        createLog(ActionType.CREATE, "Scale", scale.getId(), manager.getId(), "Scale criada com sucesso", LogStatus.SUCCESS);
     }
 
     // Pendente implementar validação de Scale
@@ -65,30 +66,32 @@ public class ScaleService {
 
     }
 
-    private Manager findManager(Long managerId) {
+    private Manager findByManager(Long managerId) {
         return managerRepository.findById(managerId)
-                .orElseThrow(() -> new ManagerNotFoundException("Manager não encontrado"));
+                .orElseThrow(() -> {
+                    createLog(ActionType.CREATE, "Manager", null, null, "Manager não encontrado ao tentar criar scale", LogStatus.ERROR);
+                    return new ManagerNotFoundException("Manager não encontrado");
+                });
     }
 
-    private Freelancer findFreelancer(Long freelancerId) {
+    private Freelancer findByFreelancer(Long freelancerId) {
         return freelancerRepository.findById(freelancerId)
-                .orElseThrow(() -> new FreelancerNotFoundException("Freelancer não encontrado"));
+                .orElseThrow(() -> {
+                    createLog(ActionType.CREATE, "Freelancer", null, null, "Freelancer não encontrado ao tentar criar scale", LogStatus.ERROR);
+                    return new FreelancerNotFoundException("Freelancer não encontrado");
+                });
     }
 
-    private Store findStore(Long storeId) {
+    private Store findByStore(Long storeId) {
         return storeRepository.findById(storeId)
-                .orElseThrow(() -> new StoreNotFoundException("Loja não encontrado"));
+                .orElseThrow(() -> {
+                    createLog(ActionType.CREATE, "Store", null, null, "Store não encontrado ao tentar criar scale", LogStatus.ERROR);
+                    return new StoreNotFoundException("Store não encontrado");
+                });
     }
 
-    private void createScaleSuccessfulLog(Long scaleId, Long ManagerId) {
-        Log log = new Log(
-                ActionType.CREATE,
-                "Scale",
-                scaleId,
-                ManagerId,
-                "Escala cria com sucesso",
-                LogStatus.SUCCESS
-        );
+    private void createLog(ActionType action, String entityName, Long entityId, Long managerId, String description, LogStatus status) {
+        Log log = new Log(action, entityName, entityId, managerId, description, status);
         logService.createLog(log);
     }
 }

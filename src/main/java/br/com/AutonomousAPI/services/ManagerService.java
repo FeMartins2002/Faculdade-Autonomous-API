@@ -25,58 +25,27 @@ public class ManagerService {
     private LogService logService;
 
     public ManagerResponseDTO login(LoginManagerDTO dto) {
-        try {
-            Manager manager = findEmail(dto.getEmail());
+            Manager manager = findByEmail(dto.getEmail());
 
             if (!manager.getPassword().equals(dto.getPassword())) {
-                IncorrectPasswordLog("Senha incorreta para o e-mail: " + dto.getEmail());
+                createLog(ActionType.LOGIN, manager.getId(), "Credenciais inválidas", LogStatus.ERROR);
                 throw new UnauthorizedException("Senha incorreta");
             }
 
-            loginSuccessfulLog(manager.getId(), manager.getEmail());
+            createLog(ActionType.LOGIN, manager.getId(), "Login com sucesso", LogStatus.SUCCESS);
             return managerMapper.toResponse(manager);
-        }
-        catch (ManagerNotFoundException ex) {
-            managerNotFoundLog("Tentativa de login com e-mail: " + dto.getEmail());
-            throw ex;
-        }
     }
 
-    private Manager findEmail(String email) {
+    private Manager findByEmail(String email) {
         return managerRepository.findByEmail(email)
-                .orElseThrow(() -> new ManagerNotFoundException("Manager não encontrado"));
+                .orElseThrow(() -> {
+                    createLog(ActionType.LOGIN, null, "Credenciais inválidas", LogStatus.ERROR);
+                    return new ManagerNotFoundException("Manager não encontrado");
+                });
     }
 
-    private void loginSuccessfulLog(Long managerId, String managerEmail) {
-        Log log = new Log(
-                ActionType.LOGIN,
-                "",
-                null,
-                managerId,
-                "Login realizado com sucesso com o e-mail: " + managerEmail,
-                LogStatus.SUCCESS);
-        logService.createLog(log);
-    }
-
-    private void managerNotFoundLog(String description) {
-        Log log = new Log(
-                ActionType.LOGIN,
-                null,
-                null,
-                null,
-                description,
-                LogStatus.ERROR);
-        logService.createLog(log);
-    }
-
-    private void IncorrectPasswordLog(String description) {
-        Log log = new Log(
-                ActionType.LOGIN,
-                null,
-                null,
-                null,
-                description,
-                LogStatus.ERROR);
+    private void createLog(ActionType action, Long managerId, String description, LogStatus status) {
+        Log log = new Log(action, "Manager", null, managerId, description, status);
         logService.createLog(log);
     }
 }

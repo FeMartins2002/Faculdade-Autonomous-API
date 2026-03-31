@@ -1,6 +1,6 @@
 package br.com.AutonomousAPI.dtos.response.scale;
 
-import br.com.AutonomousAPI.entities.Point;
+import br.com.AutonomousAPI.dtos.response.point.PointResponseDTO;
 import br.com.AutonomousAPI.enums.ScaleStatus;
 
 import java.time.LocalDateTime;
@@ -15,7 +15,7 @@ public class ScaleResponseDTO {
     private String freelancerName;
     private String managerName;
     private String storeName;
-    private List<Point> points;
+    private List<PointResponseDTO> points;
 
     public ScaleResponseDTO() {
 
@@ -85,11 +85,11 @@ public class ScaleResponseDTO {
         this.storeName = storeName;
     }
 
-    public List<Point> getPoints() {
+    public List<PointResponseDTO> getPoints() {
         return points;
     }
 
-    public void setPoints(List<Point> points) {
+    public void setPoints(List<PointResponseDTO> points) {
         this.points = points;
     }
 }

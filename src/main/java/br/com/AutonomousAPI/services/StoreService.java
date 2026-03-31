@@ -1,8 +1,11 @@
 package br.com.AutonomousAPI.services;
 
 import br.com.AutonomousAPI.dtos.request.store.CreateStoreDTO;
+import br.com.AutonomousAPI.entities.Log;
 import br.com.AutonomousAPI.entities.Manager;
 import br.com.AutonomousAPI.entities.Store;
+import br.com.AutonomousAPI.enums.ActionType;
+import br.com.AutonomousAPI.enums.LogStatus;
 import br.com.AutonomousAPI.exceptions.AddressAlreadyRegisteredException;
 import br.com.AutonomousAPI.exceptions.ManagerNotFoundException;
 import br.com.AutonomousAPI.exceptions.PhoneAlreadyRegisteredException;
@@ -28,19 +31,22 @@ public class StoreService {
 
     public void createStore(CreateStoreDTO dto) {
         validateStore(dto);
-        Manager manager = findManager(dto.getManagerId());
+        Manager manager = findByManager(dto.getManagerId());
 
         Store store = storeMapper.toEntity(dto, manager);
         store.setActive(true);
 
         storeRepository.save(store);
+        createLog(ActionType.CREATE, "Store", store.getId(), manager.getId(), "Store criada com sucesso", LogStatus.SUCCESS);
     }
 
     private void validateStore(CreateStoreDTO store) {
         if(validatePhone(store.getPhone())) {
+            createLog(ActionType.CREATE, "Store", null, store.getManagerId(), "Tentativa de cadastro com telefone já existente", LogStatus.ERROR);
             throw new PhoneAlreadyRegisteredException("Telefone já cadastrado");
         }
         if(validateAddress(store.getAddress())) {
+            createLog(ActionType.CREATE, "Store", null, store.getManagerId(), "Tentativa de cadastro com endereço já existente", LogStatus.ERROR);
             throw new AddressAlreadyRegisteredException("Endereço já cadastrado");
         }
     }
@@ -53,8 +59,16 @@ public class StoreService {
         return storeRepository.findByAddress(address).isPresent();
     }
 
-    private Manager findManager(Long managerId) {
+    private Manager findByManager(Long managerId) {
         return managerRepository.findById(managerId)
-                .orElseThrow(() -> new ManagerNotFoundException("Manager não encontrado"));
+                .orElseThrow(() -> {
+                    createLog(ActionType.CREATE, "Manager", null, null,"Manager não encontrado ao tentar criar store", LogStatus.ERROR);
+                    return new ManagerNotFoundException("Manager não encontrado");
+                });
+    }
+
+    private void createLog(ActionType action, String entityName, Long entityId, Long managerId, String description, LogStatus status) {
+        Log log = new Log(action, entityName, entityId, managerId, description, status);
+        logService.createLog(log);
     }
 }

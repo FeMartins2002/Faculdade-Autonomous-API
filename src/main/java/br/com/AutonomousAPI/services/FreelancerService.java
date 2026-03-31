@@ -3,7 +3,10 @@ package br.com.AutonomousAPI.services;
 import br.com.AutonomousAPI.dtos.request.freelancer.CreateFreelancerDTO;
 import br.com.AutonomousAPI.dtos.response.freelancer.FreelancerResponseDTO;
 import br.com.AutonomousAPI.entities.Freelancer;
+import br.com.AutonomousAPI.entities.Log;
 import br.com.AutonomousAPI.entities.Manager;
+import br.com.AutonomousAPI.enums.ActionType;
+import br.com.AutonomousAPI.enums.LogStatus;
 import br.com.AutonomousAPI.exceptions.CpfAlreadyRegisteredException;
 import br.com.AutonomousAPI.exceptions.EmailAlreadyRegisteredException;
 import br.com.AutonomousAPI.exceptions.ManagerNotFoundException;
@@ -43,23 +46,27 @@ public class FreelancerService {
 
     public void createFreelancer(CreateFreelancerDTO dto) {
         validateFreelancer(dto);
-        Manager manager = findManager(dto.getManagerId());
+        Manager manager = findByManager(dto.getManagerId());
         String generatedPassword = PasswordGenerator.generateDefaultPassword();
 
         Freelancer freelancer = freelancerMapper.toEntity(dto, manager, generatedPassword);
         freelancer.setActive(true);
 
         freelancerRepository.save(freelancer);
+        createLog(ActionType.CREATE, "Freelancer", freelancer.getId(), manager.getId(), "Freelancer criado com sucesso", LogStatus.SUCCESS);
     }
 
     private void validateFreelancer(CreateFreelancerDTO freelancer) {
         if (validateCpf(freelancer.getCpf())) {
+            createLog(ActionType.CREATE, "Freelancer", null, freelancer.getManagerId(), "Tentativa de cadastro com cpf já existente", LogStatus.ERROR);
             throw new CpfAlreadyRegisteredException("CPF já cadastrado");
         }
         if (validateEmail(freelancer.getEmail())) {
+            createLog(ActionType.CREATE, "Freelancer", null, freelancer.getManagerId(), "Tentativa de cadastro com e-mail já existente", LogStatus.ERROR);
             throw new EmailAlreadyRegisteredException("Email já cadastrado");
         }
         if (validatePhone(freelancer.getPhone())) {
+            createLog(ActionType.CREATE, "Freelancer", null, freelancer.getManagerId(), "Tentativa de cadastro com telefone já existente", LogStatus.ERROR);
             throw new PhoneAlreadyRegisteredException("Telefone já cadastrado");
         }
     }
@@ -76,8 +83,16 @@ public class FreelancerService {
         return freelancerRepository.findByPhone(phone).isPresent();
     }
 
-    private Manager findManager(Long managerId) {
+    private Manager findByManager(Long managerId) {
         return managerRepository.findById(managerId)
-                .orElseThrow(() -> new ManagerNotFoundException("Manager não encontrado"));
+                .orElseThrow(() -> {
+                    createLog(ActionType.CREATE, "Manager", null, null, "Manager não encontrado ao tentar criar freelancer", LogStatus.ERROR);
+                    return new ManagerNotFoundException("Manager não encontrado");
+                });
+    }
+
+    private void createLog(ActionType action, String entityName, Long entityId, Long managerId, String description, LogStatus status) {
+        Log log = new Log(action, entityName, entityId, managerId, description, status);
+        logService.createLog(log);
     }
 }

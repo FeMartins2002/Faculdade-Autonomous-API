@@ -16,11 +16,12 @@ public interface ScaleMapper {
     @Mapping(source = "freelancer.name", target = "freelancerName")
     @Mapping(source = "manager.name", target = "managerName")
     @Mapping(source = "store.name", target = "storeName")
+    @Mapping(source = "points", target = "points")
     ScaleResponseDTO toResponse(Scale scale);
 
     List<ScaleResponseDTO> toResponseList(List<Scale> scales);
 
-    @Mapping(target = "scaleStatus", source = "dto.scaleStatus")
+    @Mapping(target = "scaleStatus", ignore = true)
     @Mapping(target = "scaleValue", source = "dto.scaleValue")
     @Mapping(target = "scaleDateTime", source = "dto.scaleDateTime")
     @Mapping(target = "scaleObservation", ignore = true)

@@ -1,6 +1,5 @@
 package br.com.AutonomousAPI.dtos.request.scale;
 
-import br.com.AutonomousAPI.enums.ScaleStatus;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -11,9 +10,6 @@ public class CreateScaleDTO {
     @NotNull
     @Positive
     private Long managerId;
-
-    @NotNull
-    private ScaleStatus scaleStatus;
 
     @Positive
     private double scaleValue;
@@ -40,14 +36,6 @@ public class CreateScaleDTO {
 
     public void setManagerId(Long managerId) {
         this.managerId = managerId;
-    }
-
-    public ScaleStatus getScaleStatus() {
-        return scaleStatus;
-    }
-
-    public void setScaleStatus(ScaleStatus scaleStatus) {
-        this.scaleStatus = scaleStatus;
     }
 
     public double getScaleValue() {

@@ -2,12 +2,15 @@ package br.com.AutonomousAPI.controllers;
 
 import br.com.AutonomousAPI.dtos.request.freelancer.CreateFreelancerDTO;
 import br.com.AutonomousAPI.dtos.response.freelancer.FreelancerResponseDTO;
-import br.com.AutonomousAPI.entities.Freelancer;
 import br.com.AutonomousAPI.services.FreelancerService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 

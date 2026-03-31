@@ -1,6 +1,7 @@
 package br.com.AutonomousAPI.entities;
 
 import br.com.AutonomousAPI.enums.ScaleStatus;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
@@ -15,6 +16,7 @@ import jakarta.persistence.OneToMany;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -50,8 +52,8 @@ public class Scale implements Serializable {
     @JoinColumn(name = "id_store", nullable = false)
     private Store store;
 
-    @OneToMany(mappedBy = "scale")
-    private List<Point> points;
+    @OneToMany(mappedBy = "scale", fetch = FetchType.LAZY)
+    private List<Point> points = new ArrayList<>();
 
     public Scale() {
 
@@ -124,5 +126,13 @@ public class Scale implements Serializable {
 
     public void setStore(Store store) {
         this.store = store;
+    }
+
+    public List<Point> getPoints() {
+        return points;
+    }
+
+    public void setPoints(List<Point> points) {
+        this.points = points;
     }
 }
