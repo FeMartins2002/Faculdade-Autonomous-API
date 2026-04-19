@@ -16,6 +16,12 @@ public class StoreController {
     @Autowired
     private StoreService storeService;
 
+    @GetMapping
+    public ResponseEntity<List<StoreResponseDTO>> findStores() {
+        List<StoreResponseDTO> stores = storeService.findAll();
+        return ResponseEntity.ok(stores);
+    }
+
     @PostMapping
     public ResponseEntity<Void> createStore(@RequestBody @Valid CreateStoreDTO dto) {
         storeService.createStore(dto);
