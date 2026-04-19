@@ -1,6 +1,7 @@
 package br.com.AutonomousAPI.services;
 
 import br.com.AutonomousAPI.dtos.request.store.CreateStoreDTO;
+import br.com.AutonomousAPI.dtos.response.StoreResponseDTO;
 import br.com.AutonomousAPI.entities.Log;
 import br.com.AutonomousAPI.entities.Manager;
 import br.com.AutonomousAPI.entities.Store;
@@ -15,6 +16,8 @@ import br.com.AutonomousAPI.repositories.StoreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class StoreService {
     @Autowired
@@ -28,6 +31,10 @@ public class StoreService {
 
     @Autowired
     private LogService logService;
+
+    public List<StoreResponseDTO> findAll() {
+        return storeMapper.toResponseList(storeRepository.findAll());
+    }
 
     public void createStore(CreateStoreDTO dto) {
         validateStore(dto);
