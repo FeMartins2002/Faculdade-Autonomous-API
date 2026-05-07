@@ -21,9 +21,9 @@ public class FreelancerController {
     private FreelancerService freelancerService;
 
     @PostMapping
-    public ResponseEntity<Void> createFreelancer(@RequestBody @Valid CreateFreelancerDTO dto) {
-        freelancerService.createFreelancer(dto);
-        return ResponseEntity.status(201).build();
+    public ResponseEntity<FreelancerResponseDTO> createFreelancer(@RequestBody @Valid CreateFreelancerDTO dto) {
+        FreelancerResponseDTO freelancer = freelancerService.createFreelancer(dto);
+        return ResponseEntity.status(201).body(freelancer);
     }
 
     @GetMapping(value = "/actives")

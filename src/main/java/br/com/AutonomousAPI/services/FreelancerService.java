@@ -44,7 +44,7 @@ public class FreelancerService {
         return freelancerMapper.toResponseList(freelancers);
     }
 
-    public void createFreelancer(CreateFreelancerDTO dto) {
+    public FreelancerResponseDTO createFreelancer(CreateFreelancerDTO dto) {
         validateFreelancer(dto);
         Manager manager = findByManager(dto.getManagerId());
         String generatedPassword = PasswordGenerator.generateDefaultPassword();
@@ -54,20 +54,21 @@ public class FreelancerService {
 
         freelancerRepository.save(freelancer);
         createLog(ActionType.CREATE, "Freelancer", freelancer.getId(), manager.getId(), "Freelancer criado com sucesso", LogStatus.SUCCESS);
+        return freelancerMapper.toResponse(freelancer);
     }
 
     private void validateFreelancer(CreateFreelancerDTO freelancer) {
         if (validateCpf(freelancer.getCpf())) {
             createLog(ActionType.CREATE, "Freelancer", null, freelancer.getManagerId(), "Tentativa de cadastro com cpf já existente", LogStatus.ERROR);
-            throw new CpfAlreadyRegisteredException("CPF já cadastrado");
+            throw new CpfAlreadyRegisteredException("Tentativa de cadastro de Freelancer com CPF existente no DB");
         }
         if (validateEmail(freelancer.getEmail())) {
             createLog(ActionType.CREATE, "Freelancer", null, freelancer.getManagerId(), "Tentativa de cadastro com e-mail já existente", LogStatus.ERROR);
-            throw new EmailAlreadyRegisteredException("Email já cadastrado");
+            throw new EmailAlreadyRegisteredException("Tentativa de cadastro de Freelancer com E-mail existente no DB");
         }
         if (validatePhone(freelancer.getPhone())) {
             createLog(ActionType.CREATE, "Freelancer", null, freelancer.getManagerId(), "Tentativa de cadastro com telefone já existente", LogStatus.ERROR);
-            throw new PhoneAlreadyRegisteredException("Telefone já cadastrado");
+            throw new PhoneAlreadyRegisteredException("Tentativa de cadastro de Freelancer com Telefone existente no DB");
         }
     }
 

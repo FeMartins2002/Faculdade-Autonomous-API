@@ -1,7 +1,7 @@
 package br.com.AutonomousAPI.services;
 
 import br.com.AutonomousAPI.dtos.request.store.CreateStoreDTO;
-import br.com.AutonomousAPI.dtos.response.StoreResponseDTO;
+import br.com.AutonomousAPI.dtos.response.store.StoreResponseDTO;
 import br.com.AutonomousAPI.entities.Log;
 import br.com.AutonomousAPI.entities.Manager;
 import br.com.AutonomousAPI.entities.Store;
@@ -36,7 +36,7 @@ public class StoreService {
         return storeMapper.toResponseList(storeRepository.findAll());
     }
 
-    public void createStore(CreateStoreDTO dto) {
+    public StoreResponseDTO createStore(CreateStoreDTO dto) {
         validateStore(dto);
         Manager manager = findByManager(dto.getManagerId());
 
@@ -45,6 +45,7 @@ public class StoreService {
 
         storeRepository.save(store);
         createLog(ActionType.CREATE, "Store", store.getId(), manager.getId(), "Store criada com sucesso", LogStatus.SUCCESS);
+        return storeMapper.toResponse(store);
     }
 
     private void validateStore(CreateStoreDTO store) {

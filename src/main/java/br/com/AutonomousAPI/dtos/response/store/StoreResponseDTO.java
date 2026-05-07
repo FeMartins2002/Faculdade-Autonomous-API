@@ -1,4 +1,4 @@
-package br.com.AutonomousAPI.dtos.response;
+package br.com.AutonomousAPI.dtos.response.store;
 
 public class StoreResponseDTO {
     private Long id;

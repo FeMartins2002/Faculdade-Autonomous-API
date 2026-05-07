@@ -2,7 +2,6 @@ package br.com.AutonomousAPI.entities;
 
 import br.com.AutonomousAPI.enums.ActionType;
 import br.com.AutonomousAPI.enums.LogStatus;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
