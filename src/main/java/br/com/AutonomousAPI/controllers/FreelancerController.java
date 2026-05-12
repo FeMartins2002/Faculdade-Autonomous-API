@@ -1,6 +1,7 @@
 package br.com.AutonomousAPI.controllers;
 
 import br.com.AutonomousAPI.dtos.request.freelancer.CreateFreelancerDTO;
+import br.com.AutonomousAPI.dtos.response.freelancer.FreelancerOptionDTO;
 import br.com.AutonomousAPI.dtos.response.freelancer.FreelancerResponseDTO;
 import br.com.AutonomousAPI.services.FreelancerService;
 import jakarta.validation.Valid;
@@ -35,6 +36,12 @@ public class FreelancerController {
     @GetMapping(value = "/inactives")
     public ResponseEntity<List<FreelancerResponseDTO>> freelancersInactives() {
         List<FreelancerResponseDTO> freelancers = freelancerService.freelancersInactives();
+        return ResponseEntity.ok().body(freelancers);
+    }
+
+    @GetMapping(value = "/options")
+    public ResponseEntity<List<FreelancerOptionDTO>> freelancersOptions() {
+        List<FreelancerOptionDTO> freelancers = freelancerService.freelancerOptions();
         return ResponseEntity.ok().body(freelancers);
     }
 }

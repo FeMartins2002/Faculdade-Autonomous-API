@@ -1,6 +1,7 @@
 package br.com.AutonomousAPI.mappers;
 
 import br.com.AutonomousAPI.dtos.request.store.CreateStoreDTO;
+import br.com.AutonomousAPI.dtos.response.store.StoreOptions;
 import br.com.AutonomousAPI.dtos.response.store.StoreResponseDTO;
 import br.com.AutonomousAPI.entities.Manager;
 import br.com.AutonomousAPI.entities.Store;
@@ -21,4 +22,6 @@ public interface StoreMapper {
     StoreResponseDTO toResponse(Store store);
 
     List<StoreResponseDTO> toResponseList(List<Store> stores);
+
+    List<StoreOptions> toOptionsList(List<Store> stores);
 }

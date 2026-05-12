@@ -1,6 +1,7 @@
 package br.com.AutonomousAPI.services;
 
 import br.com.AutonomousAPI.dtos.request.store.CreateStoreDTO;
+import br.com.AutonomousAPI.dtos.response.store.StoreOptions;
 import br.com.AutonomousAPI.dtos.response.store.StoreResponseDTO;
 import br.com.AutonomousAPI.entities.Log;
 import br.com.AutonomousAPI.entities.Manager;
@@ -34,6 +35,10 @@ public class StoreService {
 
     public List<StoreResponseDTO> findAll() {
         return storeMapper.toResponseList(storeRepository.findAll());
+    }
+
+    public List<StoreOptions> findOptionsActives() {
+        return storeMapper.toOptionsList(storeRepository.findByActiveTrueOrderByName());
     }
 
     public StoreResponseDTO createStore(CreateStoreDTO dto) {

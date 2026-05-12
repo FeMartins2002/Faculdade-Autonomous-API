@@ -1,6 +1,7 @@
 package br.com.AutonomousAPI.services;
 
 import br.com.AutonomousAPI.dtos.request.freelancer.CreateFreelancerDTO;
+import br.com.AutonomousAPI.dtos.response.freelancer.FreelancerOptionDTO;
 import br.com.AutonomousAPI.dtos.response.freelancer.FreelancerResponseDTO;
 import br.com.AutonomousAPI.entities.Freelancer;
 import br.com.AutonomousAPI.entities.Log;
@@ -42,6 +43,10 @@ public class FreelancerService {
     public List<FreelancerResponseDTO> freelancersInactives() {
         List<Freelancer> freelancers = freelancerRepository.findByActiveFalseOrderByName();
         return freelancerMapper.toResponseList(freelancers);
+    }
+
+    public List<FreelancerOptionDTO> freelancerOptions() {
+        return freelancerMapper.toOptionsList(freelancerRepository.findByActiveTrueOrderByName());
     }
 
     public FreelancerResponseDTO createFreelancer(CreateFreelancerDTO dto) {

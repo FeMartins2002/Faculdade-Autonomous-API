@@ -1,6 +1,7 @@
 package br.com.AutonomousAPI.controllers;
 
 import br.com.AutonomousAPI.dtos.request.store.CreateStoreDTO;
+import br.com.AutonomousAPI.dtos.response.store.StoreOptions;
 import br.com.AutonomousAPI.dtos.response.store.StoreResponseDTO;
 import br.com.AutonomousAPI.services.StoreService;
 import jakarta.validation.Valid;
@@ -25,6 +26,12 @@ public class StoreController {
     @GetMapping
     public ResponseEntity<List<StoreResponseDTO>> findStores() {
         List<StoreResponseDTO> stores = storeService.findAll();
+        return ResponseEntity.ok(stores);
+    }
+
+    @GetMapping(value = "/options")
+    public ResponseEntity<List<StoreOptions>> findStoreOptions() {
+        List<StoreOptions> stores = storeService.findOptionsActives();
         return ResponseEntity.ok(stores);
     }
 }

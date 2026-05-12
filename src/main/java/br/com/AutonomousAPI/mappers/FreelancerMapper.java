@@ -1,6 +1,7 @@
 package br.com.AutonomousAPI.mappers;
 
 import br.com.AutonomousAPI.dtos.request.freelancer.CreateFreelancerDTO;
+import br.com.AutonomousAPI.dtos.response.freelancer.FreelancerOptionDTO;
 import br.com.AutonomousAPI.dtos.response.freelancer.FreelancerResponseDTO;
 import br.com.AutonomousAPI.entities.Freelancer;
 import br.com.AutonomousAPI.entities.Manager;
@@ -26,6 +27,8 @@ public interface FreelancerMapper {
     FreelancerResponseDTO toResponse(Freelancer freelancer);
 
     List<FreelancerResponseDTO> toResponseList(List<Freelancer> freelancers);
+
+    List<FreelancerOptionDTO> toOptionsList(List<Freelancer> freelancers);
 
     @Named("maskCpf")
     default String maskCpf(String cpf) {
