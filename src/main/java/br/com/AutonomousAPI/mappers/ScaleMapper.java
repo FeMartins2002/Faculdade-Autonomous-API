@@ -23,7 +23,9 @@ public interface ScaleMapper {
 
     @Mapping(target = "scaleStatus", ignore = true)
     @Mapping(target = "scaleValue", source = "dto.scaleValue")
-    @Mapping(target = "scaleDateTime", source = "dto.scaleDateTime")
+    @Mapping(target = "scaleDate", source = "dto.scaleDate")
+    @Mapping(target = "startTime", source = "dto.startTime")
+    @Mapping(target = "endTime", source = "dto.endTime")
     @Mapping(target = "scaleObservation", ignore = true)
     @Mapping(target = "freelancer", source = "freelancer")
     @Mapping(target = "manager", source = "manager")

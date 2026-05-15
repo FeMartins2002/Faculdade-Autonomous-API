@@ -78,9 +78,9 @@ public class PointService {
     private Scale findScaleToday(String email) {
         LocalDate today = LocalDate.now();
 
-        return scaleRepository.findByScaleDateTimeBetweenAndFreelancerEmailAndScaleStatus(
-                today.atStartOfDay(),
-                today.atTime(23, 59, 59),
+        return scaleRepository.findByScaleDateBetweenAndFreelancerEmailAndScaleStatus(
+                LocalDate.from(today.atStartOfDay()),
+                LocalDate.from(today.atTime(23, 59, 59)),
                 email,
                 ScaleStatus.CRIADO
         );

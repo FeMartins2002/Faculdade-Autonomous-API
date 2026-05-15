@@ -14,7 +14,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,8 +34,14 @@ public class Scale implements Serializable {
     @Column(name = "scale_value", nullable = false)
     private double scaleValue;
 
-    @Column(name = "scale_datetime", nullable = false)
-    private LocalDateTime scaleDateTime;
+    @Column(name = "scale_date", nullable = false)
+    private LocalDate scaleDate;
+
+    @Column(name = "start_time", nullable = false)
+    private LocalTime startTime;
+
+    @Column(name = "end_time", nullable = false)
+    private LocalTime endTime;
 
     @Column(name = "scale_observation")
     private String scaleObservation;
@@ -58,10 +65,12 @@ public class Scale implements Serializable {
 
     }
 
-    public Scale(double scaleValue, LocalDateTime scaleDateTime, Freelancer freelancer, Manager manager, Store store) {
+    public Scale(double scaleValue, LocalDate scaleDate, LocalTime startTime, LocalTime endTime, Freelancer freelancer, Manager manager, Store store) {
         this.scaleStatus = ScaleStatus.CRIADO;
         this.scaleValue = scaleValue;
-        this.scaleDateTime = scaleDateTime;
+        this.scaleDate = scaleDate;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.freelancer = freelancer;
         this.manager = manager;
         this.store = store;
@@ -87,12 +96,28 @@ public class Scale implements Serializable {
         this.scaleValue = scaleValue;
     }
 
-    public LocalDateTime getScaleDateTime() {
-        return scaleDateTime;
+    public LocalDate getScaleDate() {
+        return scaleDate;
     }
 
-    public void setScaleDateTime(LocalDateTime scaleDateTime) {
-        this.scaleDateTime = scaleDateTime;
+    public void setScaleDate(LocalDate scaleDate) {
+        this.scaleDate = scaleDate;
+    }
+
+    public LocalTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalTime endTime) {
+        this.endTime = endTime;
     }
 
     public String getScaleObservation() {

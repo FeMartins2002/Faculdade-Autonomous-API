@@ -3,14 +3,17 @@ package br.com.AutonomousAPI.dtos.response.scale;
 import br.com.AutonomousAPI.dtos.response.point.PointResponseDTO;
 import br.com.AutonomousAPI.enums.ScaleStatus;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 public class ScaleResponseDTO {
     private Long id;
     private ScaleStatus scaleStatus;
     private double scaleValue;
-    private LocalDateTime scaleDateTime;
+    private LocalDate scaleDate;
+    private LocalTime startTime;
+    private LocalTime endTime;
     private String scaleObservation;
     private String freelancerName;
     private String managerName;
@@ -45,12 +48,28 @@ public class ScaleResponseDTO {
         this.scaleValue = scaleValue;
     }
 
-    public LocalDateTime getScaleDateTime() {
-        return scaleDateTime;
+    public LocalDate getScaleDate() {
+        return scaleDate;
     }
 
-    public void setScaleDateTime(LocalDateTime scaleDateTime) {
-        this.scaleDateTime = scaleDateTime;
+    public void setScaleDate(LocalDate scaleDate) {
+        this.scaleDate = scaleDate;
+    }
+
+    public LocalTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalTime endTime) {
+        this.endTime = endTime;
     }
 
     public String getScaleObservation() {

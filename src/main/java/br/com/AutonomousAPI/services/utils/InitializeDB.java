@@ -15,7 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.*;
 
 @Service
@@ -54,7 +55,7 @@ public class InitializeDB implements CommandLineRunner {
         stores.add(store1);
         stores.add(store2);
 
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 20; i++) {
             Store store = new Store(
                     faker.address().cityName(),
                     faker.phoneNumber().cellPhone(),
@@ -73,7 +74,7 @@ public class InitializeDB implements CommandLineRunner {
         Freelancer freelancer1 = new Freelancer("56612985432", "Maria", "maria123@gmail.com", "11923451123", "123", manager1);
         freelancers.add(freelancer1);
 
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 14; i++) {
             Freelancer freelancer = new Freelancer(
                     faker.number().digits(11),
                     faker.name().firstName(),
@@ -91,9 +92,35 @@ public class InitializeDB implements CommandLineRunner {
 
         List<Scale> scales = new ArrayList<>();
 
-        Scale scale1 = new Scale(150, LocalDateTime.parse("2026-08-20T13:00:00"), freelancer1, manager1, store1);
-        Scale scale2 = new Scale(200, LocalDateTime.parse("2026-08-21T13:00:00"), freelancer1, manager1, store2);
-        Scale scale3 = new Scale(150, LocalDateTime.parse("2026-08-22T13:00:00"), freelancer1, manager1, store2);
+        Scale scale1 = new Scale(
+                150,
+                LocalDate.parse("2026-05-15"),
+                LocalTime.parse("13:00"),
+                LocalTime.parse("20:00"),
+                freelancer1,
+                manager1,
+                store1
+        );
+
+        Scale scale2 = new Scale(
+                200,
+                LocalDate.parse("2026-08-21"),
+                LocalTime.parse("13:00"),
+                LocalTime.parse("22:00"),
+                freelancer1,
+                manager1,
+                store2
+        );
+
+        Scale scale3 = new Scale(
+                150,
+                LocalDate.parse("2026-08-22"),
+                LocalTime.parse("08:00"),
+                LocalTime.parse("17:00"),
+                freelancer1,
+                manager1,
+                store2
+        );
         scale1.setScaleStatus(ScaleStatus.CRIADO);
         scale2.setScaleStatus(ScaleStatus.CONCLUIDO);
         scale3.setScaleStatus(ScaleStatus.CANCELADO);
@@ -103,40 +130,73 @@ public class InitializeDB implements CommandLineRunner {
         scales.add(scale3);
 
         // CONCLUIDO
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 10; i++) {
+
+            LocalTime startTime = LocalTime.of(
+                    faker.number().numberBetween(7, 10),
+                    0
+            );
+
+            LocalTime endTime = startTime.plusHours(8);
+
             Scale scale = new Scale(
                     faker.number().numberBetween(100, 300),
-                    LocalDateTime.now().minusDays(random.nextInt(30)),
+                    LocalDate.now().minusDays(random.nextInt(30)),
+                    startTime,
+                    endTime,
                     freelancers.get(random.nextInt(freelancers.size())),
                     manager1,
                     stores.get(random.nextInt(stores.size()))
             );
+
             scale.setScaleStatus(ScaleStatus.CONCLUIDO);
             scales.add(scale);
         }
 
         // CRIADO
         for (int i = 0; i < 10; i++) {
+
+            LocalTime startTime = LocalTime.of(
+                    faker.number().numberBetween(7, 10),
+                    0
+            );
+
+            LocalTime endTime = startTime.plusHours(8);
+
             Scale scale = new Scale(
                     faker.number().numberBetween(100, 300),
-                    LocalDateTime.now().plusDays(random.nextInt(30)),
+                    LocalDate.now().plusDays(random.nextInt(30)),
+                    startTime,
+                    endTime,
                     freelancers.get(random.nextInt(freelancers.size())),
                     manager1,
                     stores.get(random.nextInt(stores.size()))
             );
+
             scale.setScaleStatus(ScaleStatus.CRIADO);
             scales.add(scale);
         }
 
         // CANCELADO
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 8; i++) {
+
+            LocalTime startTime = LocalTime.of(
+                    faker.number().numberBetween(7, 10),
+                    0
+            );
+
+            LocalTime endTime = startTime.plusHours(8);
+
             Scale scale = new Scale(
                     faker.number().numberBetween(100, 300),
-                    LocalDateTime.now().plusDays(random.nextInt(60)),
+                    LocalDate.now().plusDays(random.nextInt(60)),
+                    startTime,
+                    endTime,
                     freelancers.get(random.nextInt(freelancers.size())),
                     manager1,
                     stores.get(random.nextInt(stores.size()))
             );
+
             scale.setScaleStatus(ScaleStatus.CANCELADO);
             scales.add(scale);
         }

@@ -48,7 +48,7 @@ public class ScaleService {
         return scaleMapper.toResponseList(scaleRepository.findByScaleStatus(status));
     }
 
-    public void createScale(CreateScaleDTO dto) {
+    public ScaleResponseDTO createScale(CreateScaleDTO dto) {
         //validateScale(dto);
         Manager manager = findByManager(dto.getManagerId());
         Freelancer freelancer = findByFreelancer(dto.getFreelancerId());
@@ -59,6 +59,7 @@ public class ScaleService {
 
         scaleRepository.save(scale);
         createLog(ActionType.CREATE, "Scale", scale.getId(), manager.getId(), "Scale criada com sucesso", LogStatus.SUCCESS);
+        return scaleMapper.toResponse(scale);
     }
 
     // Pendente implementar validação de Scale

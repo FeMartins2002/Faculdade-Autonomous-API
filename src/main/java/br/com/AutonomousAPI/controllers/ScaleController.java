@@ -23,9 +23,9 @@ public class ScaleController {
     private ScaleService scaleService;
 
     @PostMapping
-    public ResponseEntity<Void> createScale(@RequestBody @Valid CreateScaleDTO createScaleDTO) {
-        scaleService.createScale(createScaleDTO);
-        return ResponseEntity.status(201).build();
+    public ResponseEntity<ScaleResponseDTO> createScale(@RequestBody @Valid CreateScaleDTO dto) {
+        ScaleResponseDTO scale = scaleService.createScale(dto);
+        return ResponseEntity.status(201).body(scale);
     }
 
     @GetMapping

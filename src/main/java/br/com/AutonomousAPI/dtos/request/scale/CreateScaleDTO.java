@@ -1,22 +1,31 @@
 package br.com.AutonomousAPI.dtos.request.scale;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 public class CreateScaleDTO {
     @NotNull
     @Positive
     private Long managerId;
 
-    @Positive
+    @Positive(message = "Valor deve ser maior que zero")
     private double scaleValue;
 
     @NotNull
-    @Future
-    private LocalDateTime scaleDateTime;
+    @Future(message = "A data da escala deve ser futura")
+    @JsonFormat(pattern = "yyyy/MM/dd")
+    private LocalDate scaleDate;
+
+    @NotNull
+    private LocalTime startTime;
+
+    @NotNull
+    private LocalTime endTime;
 
     @NotNull
     @Positive
@@ -46,12 +55,28 @@ public class CreateScaleDTO {
         this.scaleValue = scaleValue;
     }
 
-    public LocalDateTime getScaleDateTime() {
-        return scaleDateTime;
+    public LocalDate getScaleDate() {
+        return scaleDate;
     }
 
-    public void setScaleDateTime(LocalDateTime scaleDateTime) {
-        this.scaleDateTime = scaleDateTime;
+    public void setScaleDate(LocalDate scaleDate) {
+        this.scaleDate = scaleDate;
+    }
+
+    public LocalTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalTime endTime) {
+        this.endTime = endTime;
     }
 
     public Long getFreelancerId() {
