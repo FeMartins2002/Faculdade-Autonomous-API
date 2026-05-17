@@ -1,26 +1,19 @@
 package br.com.AutonomousAPI.dtos.request.scale;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 
-public class CreateScaleDTO {
+public class UpdateScaleDTO {
 
     @NotNull(message = "O gestor responsável deve ser informado.")
     @Positive(message = "O ID do gestor informado é inválido.")
     private Long managerId;
 
-    @Positive(message = "O valor da escala deve ser maior que zero.")
-    private double scaleValue;
-
-    @NotNull(message = "A data da escala deve ser informada.")
-    @Future(message = "A data da escala deve ser uma data futura.")
-    @JsonFormat(pattern = "yyyy/MM/dd")
-    private LocalDate scaleDate;
+    @NotNull(message = "A escala a ser atualizada deve ser informada.")
+    @Positive(message = "O ID da escala informado é inválido.")
+    private Long scaleId;
 
     @NotNull(message = "O horário de início da escala deve ser informado.")
     private LocalTime startTime;
@@ -28,26 +21,24 @@ public class CreateScaleDTO {
     @NotNull(message = "O horário de término da escala deve ser informado.")
     private LocalTime endTime;
 
-    @NotNull(message = "O freelancer da escala deve ser informado.")
-    @Positive(message = "O ID do freelancer informado é inválido.")
-    private Long freelancerId;
-
     @NotNull(message = "A loja da escala deve ser informada.")
     @Positive(message = "O ID da loja informado é inválido.")
     private Long storeId;
 
-    public CreateScaleDTO() {
+    @Positive(message = "O valor da escala deve ser maior que zero.")
+    private double scaleValue;
+
+    public UpdateScaleDTO() {
 
     }
 
-    public CreateScaleDTO(Long managerId, double scaleValue, LocalDate scaleDate, LocalTime startTime, LocalTime endTime, Long freelancerId, Long storeId) {
+    public UpdateScaleDTO(Long managerId, Long scaleId, LocalTime startTime, LocalTime endTime, Long storeId, double scaleValue) {
         this.managerId = managerId;
-        this.scaleValue = scaleValue;
-        this.scaleDate = scaleDate;
+        this.scaleId = scaleId;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.freelancerId = freelancerId;
         this.storeId = storeId;
+        this.scaleValue = scaleValue;
     }
 
     public Long getManagerId() {
@@ -58,20 +49,12 @@ public class CreateScaleDTO {
         this.managerId = managerId;
     }
 
-    public double getScaleValue() {
-        return scaleValue;
+    public Long getScaleId() {
+        return scaleId;
     }
 
-    public void setScaleValue(double scaleValue) {
-        this.scaleValue = scaleValue;
-    }
-
-    public LocalDate getScaleDate() {
-        return scaleDate;
-    }
-
-    public void setScaleDate(LocalDate scaleDate) {
-        this.scaleDate = scaleDate;
+    public void setScaleId(Long scaleId) {
+        this.scaleId = scaleId;
     }
 
     public LocalTime getStartTime() {
@@ -90,19 +73,19 @@ public class CreateScaleDTO {
         this.endTime = endTime;
     }
 
-    public Long getFreelancerId() {
-        return freelancerId;
-    }
-
-    public void setFreelancerId(Long freelancerId) {
-        this.freelancerId = freelancerId;
-    }
-
     public Long getStoreId() {
         return storeId;
     }
 
     public void setStoreId(Long storeId) {
         this.storeId = storeId;
+    }
+
+    public double getScaleValue() {
+        return scaleValue;
+    }
+
+    public void setScaleValue(double scaleValue) {
+        this.scaleValue = scaleValue;
     }
 }

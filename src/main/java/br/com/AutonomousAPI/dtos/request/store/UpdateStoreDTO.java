@@ -5,11 +5,15 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 
-public class CreateStoreDTO {
+public class UpdateStoreDTO {
 
     @NotNull(message = "O gestor responsável deve ser informado.")
     @Positive(message = "O ID do gestor informado é inválido.")
     private Long managerId;
+
+    @NotNull(message = "A loja a ser atualizada deve ser informada.")
+    @Positive(message = "O ID da loja informado é inválido.")
+    private Long storeId;
 
     @NotBlank(message = "O nome da loja deve ser informado.")
     private String name;
@@ -21,12 +25,13 @@ public class CreateStoreDTO {
     @NotBlank(message = "O endereço da loja deve ser informado.")
     private String address;
 
-    public CreateStoreDTO() {
+    public UpdateStoreDTO() {
 
     }
 
-    public CreateStoreDTO(Long managerId, String name, String phone, String address) {
+    public UpdateStoreDTO(Long managerId, Long storeId, String name, String phone, String address) {
         this.managerId = managerId;
+        this.storeId = storeId;
         this.name = name;
         this.phone = phone;
         this.address = address;
@@ -38,6 +43,14 @@ public class CreateStoreDTO {
 
     public void setManagerId(Long managerId) {
         this.managerId = managerId;
+    }
+
+    public Long getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(Long storeId) {
+        this.storeId = storeId;
     }
 
     public String getName() {

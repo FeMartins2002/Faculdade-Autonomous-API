@@ -1,17 +1,13 @@
 package br.com.AutonomousAPI.services;
 
-import br.com.AutonomousAPI.dtos.request.freelancer.CreateFreelancerDTO;
-import br.com.AutonomousAPI.dtos.response.freelancer.FreelancerOptionDTO;
-import br.com.AutonomousAPI.dtos.response.freelancer.FreelancerResponseDTO;
+import br.com.AutonomousAPI.dtos.request.freelancer.*;
+import br.com.AutonomousAPI.dtos.response.freelancer.*;
 import br.com.AutonomousAPI.entities.Freelancer;
 import br.com.AutonomousAPI.entities.Log;
 import br.com.AutonomousAPI.entities.Manager;
 import br.com.AutonomousAPI.enums.ActionType;
 import br.com.AutonomousAPI.enums.LogStatus;
-import br.com.AutonomousAPI.exceptions.CpfAlreadyRegisteredException;
-import br.com.AutonomousAPI.exceptions.EmailAlreadyRegisteredException;
-import br.com.AutonomousAPI.exceptions.ManagerNotFoundException;
-import br.com.AutonomousAPI.exceptions.PhoneAlreadyRegisteredException;
+import br.com.AutonomousAPI.exceptions.*;
 import br.com.AutonomousAPI.mappers.FreelancerMapper;
 import br.com.AutonomousAPI.repositories.FreelancerRepository;
 import br.com.AutonomousAPI.repositories.ManagerRepository;
@@ -35,6 +31,52 @@ public class FreelancerService {
     @Autowired
     private LogService logService;
 
+    public FreelancerResponseDTO createFreelancer(CreateFreelancerDTO dto) {
+        validateFreelancer(dto);
+
+        Manager manager = findByManager(dto.getManagerId());
+        String generatedPassword = PasswordGenerator.generateDefaultPassword();
+
+        Freelancer freelancer = freelancerMapper.toEntity(dto, manager, generatedPassword);
+        freelancer.setActive(true);
+
+        freelancerRepository.save(freelancer);
+        createLog(ActionType.CREATE, "Freelancer", freelancer.getId(), manager.getId(), "Freelancer criado com sucesso.", LogStatus.SUCCESS);
+        return freelancerMapper.toResponse(freelancer);
+    }
+
+    public FreelancerResponseDTO updateFreelancer(UpdateFreelancerDTO dto) {
+        validateFreelancer(dto);
+
+        Freelancer freelancer = findByFreelancer(dto.getFreelancerId());
+        Manager manager = findByManager(dto.getManagerId());
+
+        freelancer.setName(dto.getName());
+        freelancer.setPhone(dto.getPhone());
+        freelancer.setEmail(dto.getEmail());
+
+        freelancerRepository.save(freelancer);
+
+        createLog(ActionType.UPDATE ,"Freelancer", freelancer.getId(), manager.getId(), "Freelancer atualizado com sucesso.", LogStatus.SUCCESS);
+        return freelancerMapper.toResponse(freelancer);
+    }
+
+    public FreelancerResponseDTO deleteFreelancer(DeleteFreelancerDTO dto) {
+        Manager manager = findByManager(dto.getManagerId());
+        Freelancer freelancer = findByFreelancer(dto.getFreelancerId());
+
+        if (!freelancer.isActive()) {
+            createLog(ActionType.DELETE, "Freelancer", freelancer.getId(), manager.getId(), "Tentativa de exclusão de freelancer já inativo", LogStatus.ERROR);
+            throw new FreelancerAlreadyInactiveException("Tentativa de exclusão de freelancer já inativo");
+        }
+
+        freelancer.setActive(false);
+        freelancerRepository.save(freelancer);
+
+        createLog(ActionType.DELETE, "Freelancer", freelancer.getId(), manager.getId(), "Freelancer desativado com sucesso", LogStatus.SUCCESS);
+        return freelancerMapper.toResponse(freelancer);
+    }
+
     public List<FreelancerResponseDTO> freelancersActives() {
         List<Freelancer> freelancers = freelancerRepository.findByActiveTrueOrderByName();
         return freelancerMapper.toResponseList(freelancers);
@@ -46,20 +88,8 @@ public class FreelancerService {
     }
 
     public List<FreelancerOptionDTO> freelancerOptions() {
-        return freelancerMapper.toOptionsList(freelancerRepository.findByActiveTrueOrderByName());
-    }
-
-    public FreelancerResponseDTO createFreelancer(CreateFreelancerDTO dto) {
-        validateFreelancer(dto);
-        Manager manager = findByManager(dto.getManagerId());
-        String generatedPassword = PasswordGenerator.generateDefaultPassword();
-
-        Freelancer freelancer = freelancerMapper.toEntity(dto, manager, generatedPassword);
-        freelancer.setActive(true);
-
-        freelancerRepository.save(freelancer);
-        createLog(ActionType.CREATE, "Freelancer", freelancer.getId(), manager.getId(), "Freelancer criado com sucesso", LogStatus.SUCCESS);
-        return freelancerMapper.toResponse(freelancer);
+        List<Freelancer> freelancers = freelancerRepository.findByActiveTrueOrderByName();
+        return freelancerMapper.toOptionsList(freelancers);
     }
 
     private void validateFreelancer(CreateFreelancerDTO freelancer) {
@@ -74,6 +104,18 @@ public class FreelancerService {
         if (validatePhone(freelancer.getPhone())) {
             createLog(ActionType.CREATE, "Freelancer", null, freelancer.getManagerId(), "Tentativa de cadastro com telefone já existente", LogStatus.ERROR);
             throw new PhoneAlreadyRegisteredException("Tentativa de cadastro de Freelancer com Telefone existente no DB");
+        }
+    }
+
+    private void validateFreelancer(UpdateFreelancerDTO freelancer) {
+        if (freelancerRepository.existsByEmailAndIdNot(freelancer.getEmail(), freelancer.getFreelancerId())) {
+            createLog(ActionType.UPDATE, "Freelancer", freelancer.getFreelancerId(), freelancer.getManagerId(), "Tentativa de atualização com e-mail já existente", LogStatus.ERROR);
+            throw new EmailAlreadyRegisteredException("Tentativa de atualização com e-mail já existente");
+        }
+
+        if (freelancerRepository.existsByPhoneAndIdNot(freelancer.getPhone(), freelancer.getFreelancerId())) {
+            createLog(ActionType.UPDATE, "Freelancer", freelancer.getFreelancerId(), freelancer.getManagerId(), "Tentativa de atualização com telefone já existente", LogStatus.ERROR);
+            throw new PhoneAlreadyRegisteredException("Tentativa de atualização com telefone já existente");
         }
     }
 
@@ -92,8 +134,16 @@ public class FreelancerService {
     private Manager findByManager(Long managerId) {
         return managerRepository.findById(managerId)
                 .orElseThrow(() -> {
-                    createLog(ActionType.CREATE, "Manager", null, null, "Manager não encontrado ao tentar criar freelancer", LogStatus.ERROR);
-                    return new ManagerNotFoundException("Manager não encontrado");
+                    createLog(ActionType.CREATE, "Manager", null, null, "Manager não encontrado ao tentar cadastrar freelancer", LogStatus.ERROR);
+                    return new ManagerNotFoundException("Manager não encontrado ao tentar cadastrar freelancer");
+                });
+    }
+
+    private Freelancer findByFreelancer(Long freelancerId) {
+        return freelancerRepository.findById(freelancerId)
+                .orElseThrow(() -> {
+                    createLog(ActionType.UPDATE, "Freelancer", freelancerId, null, "Freelancer não encontrado ao tentar atualizar", LogStatus.ERROR);
+                    return new FreelancerNotFoundException("Freelancer não encontrado ao tentar atualizar");
                 });
     }
 

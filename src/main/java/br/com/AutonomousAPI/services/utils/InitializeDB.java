@@ -36,6 +36,14 @@ public class InitializeDB implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
+        // Inicializa quantidade para testes de sobrecarga
+        int totalStores = 50;
+        int totalFreelancers = 100;
+        int totalScaleCompleted = 100;
+        int totalScaleCreated = 100;
+        int totalScaleCancelled = 100;
+
+
         Faker faker = new Faker(new Locale("pt-BR"));
         Random random = new Random();
 
@@ -55,7 +63,7 @@ public class InitializeDB implements CommandLineRunner {
         stores.add(store1);
         stores.add(store2);
 
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < totalStores; i++) {
             Store store = new Store(
                     faker.address().cityName(),
                     faker.phoneNumber().cellPhone(),
@@ -74,7 +82,7 @@ public class InitializeDB implements CommandLineRunner {
         Freelancer freelancer1 = new Freelancer("56612985432", "Maria", "maria123@gmail.com", "11923451123", "123", manager1);
         freelancers.add(freelancer1);
 
-        for (int i = 0; i < 14; i++) {
+        for (int i = 0; i < totalFreelancers; i++) {
             Freelancer freelancer = new Freelancer(
                     faker.number().digits(11),
                     faker.name().firstName(),
@@ -130,7 +138,7 @@ public class InitializeDB implements CommandLineRunner {
         scales.add(scale3);
 
         // CONCLUIDO
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < totalScaleCompleted; i++) {
 
             LocalTime startTime = LocalTime.of(
                     faker.number().numberBetween(7, 10),
@@ -154,7 +162,7 @@ public class InitializeDB implements CommandLineRunner {
         }
 
         // CRIADO
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < totalScaleCreated; i++) {
 
             LocalTime startTime = LocalTime.of(
                     faker.number().numberBetween(7, 10),
@@ -178,7 +186,7 @@ public class InitializeDB implements CommandLineRunner {
         }
 
         // CANCELADO
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < totalScaleCancelled; i++) {
 
             LocalTime startTime = LocalTime.of(
                     faker.number().numberBetween(7, 10),
@@ -203,6 +211,9 @@ public class InitializeDB implements CommandLineRunner {
 
         scaleRepository.saveAll(scales);
 
-        System.out.println("==================== Banco inicializado com sucesso! ====================");
+
+        String VERDE = "\u001B[32m";
+        String RESET = "\u001B[0m";
+        System.out.println(VERDE + "==================== SERVIDOR INICIADO COM SUCESSO! ====================" + RESET);
     }
 }

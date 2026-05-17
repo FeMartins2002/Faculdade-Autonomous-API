@@ -1,15 +1,12 @@
 package br.com.AutonomousAPI.controllers;
 
-import br.com.AutonomousAPI.dtos.request.manager.LoginManagerDTO;
-import br.com.AutonomousAPI.dtos.response.manager.ManagerResponseDTO;
+import br.com.AutonomousAPI.dtos.request.manager.*;
+import br.com.AutonomousAPI.dtos.response.manager.*;
 import br.com.AutonomousAPI.services.ManagerService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/autonomous/authentication")

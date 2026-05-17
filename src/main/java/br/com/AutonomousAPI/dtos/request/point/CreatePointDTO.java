@@ -4,8 +4,9 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 public class CreatePointDTO {
-    @NotBlank
-    @Email
+
+    @NotBlank(message = "O e-mail do freelancer deve ser informado.")
+    @Email(message = "O e-mail informado é inválido. Exemplo: usuario@email.com")
     private String email;
 
     public CreatePointDTO() {

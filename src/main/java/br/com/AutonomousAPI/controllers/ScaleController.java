@@ -1,18 +1,13 @@
 package br.com.AutonomousAPI.controllers;
 
-import br.com.AutonomousAPI.dtos.request.scale.CreateScaleDTO;
-import br.com.AutonomousAPI.dtos.response.scale.ScaleResponseDTO;
+import br.com.AutonomousAPI.dtos.request.scale.*;
+import br.com.AutonomousAPI.dtos.response.scale.*;
 import br.com.AutonomousAPI.enums.ScaleStatus;
 import br.com.AutonomousAPI.services.ScaleService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,6 +21,24 @@ public class ScaleController {
     public ResponseEntity<ScaleResponseDTO> createScale(@RequestBody @Valid CreateScaleDTO dto) {
         ScaleResponseDTO scale = scaleService.createScale(dto);
         return ResponseEntity.status(201).body(scale);
+    }
+
+    @PutMapping
+    public ResponseEntity<ScaleResponseDTO> updateScale(@RequestBody @Valid UpdateScaleDTO dto) {
+        ScaleResponseDTO scale = scaleService.updateScale(dto);
+        return ResponseEntity.status(200).body(scale);
+    }
+
+    @PatchMapping("/completed")
+    public ResponseEntity<ScaleResponseDTO> completedScale(@RequestBody @Valid CompletedScaleDTO dto) {
+        ScaleResponseDTO scale = scaleService.completedScale(dto);
+        return ResponseEntity.ok(scale);
+    }
+
+    @PatchMapping("/cancelled")
+    public ResponseEntity<ScaleResponseDTO> cancelledScale(@RequestBody @Valid CancelledScaleDTO dto) {
+        ScaleResponseDTO scale = scaleService.cancelledScale(dto);
+        return ResponseEntity.ok(scale);
     }
 
     @GetMapping

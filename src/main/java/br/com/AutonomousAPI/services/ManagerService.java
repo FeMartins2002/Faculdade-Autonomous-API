@@ -1,7 +1,7 @@
 package br.com.AutonomousAPI.services;
 
-import br.com.AutonomousAPI.dtos.request.manager.LoginManagerDTO;
-import br.com.AutonomousAPI.dtos.response.manager.ManagerResponseDTO;
+import br.com.AutonomousAPI.dtos.request.manager.*;
+import br.com.AutonomousAPI.dtos.response.manager.*;
 import br.com.AutonomousAPI.entities.Log;
 import br.com.AutonomousAPI.entities.Manager;
 import br.com.AutonomousAPI.enums.ActionType;

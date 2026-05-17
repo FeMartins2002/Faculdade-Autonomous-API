@@ -36,13 +36,14 @@ public class PointService {
     public void savePoint(CreatePointDTO dto) {
         Freelancer freelancer = findByFreelancer(dto.getEmail());
         Scale scale = findScaleToday(dto.getEmail());
+
         validateScale(scale, freelancer.getName());
 
         PointType pointType = definePointType(scale);
         Point point = new Point(pointType, LocalDateTime.now(), scale);
 
         pointRepository.save(point);
-        createLog(ActionType.CREATE, "Point", null, null, "Ponto marcado: Freelancer: " + freelancer.getName(), LogStatus.SUCCESS);
+        createLog(ActionType.CREATE, "Point", point.getId(), null, "Ponto marcado: Freelancer: " + freelancer.getName(), LogStatus.SUCCESS);
     }
 
     private PointType definePointType(Scale scale) {
@@ -56,13 +57,12 @@ public class PointService {
             return PointType.EXIT;
         }
 
-        throw new IllegalStateException("Scale já possui entrada e saída");
+        throw new IllegalStateException("Escala já possui entrada e saída");
     }
 
     private void validateScale(Scale scale, String freelancerName) {
         if (scale == null) {
-            createLog(ActionType.CREATE, "Scale", null, null,
-                    "Escala não encontrada para hoje: freelancer: " + freelancerName, LogStatus.ERROR);
+            createLog(ActionType.CREATE, "Scale", null, null, "Escala não encontrada para hoje: freelancer: " + freelancerName, LogStatus.ERROR);
             throw new RuntimeException("Escala não encontrada para hoje");
         }
     }
@@ -71,7 +71,7 @@ public class PointService {
         return freelancerRepository.findByEmail(email)
                 .orElseThrow(() -> {
                     createLog(ActionType.CREATE, "Freelancer", null, null, "Freelancer não encontrado ao tentar marcar ponto: " + email, LogStatus.ERROR);
-                    return new FreelancerNotFoundException("Freelancer não encontrado");
+                    return new FreelancerNotFoundException("Freelancer não encontrado ao tentar marcar ponto");
                 });
     }
 

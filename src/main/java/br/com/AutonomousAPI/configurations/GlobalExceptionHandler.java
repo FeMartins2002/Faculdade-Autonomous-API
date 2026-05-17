@@ -13,6 +13,20 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleGeneric(Exception ex) {
+
+        ErrorResponse error = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "INTERNAL_ERROR",
+                "Ocorreu um erro inesperado.",
+                ex.getMessage()
+        );
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+    }
+
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponse> handleBusiness(BusinessException ex) {
         HttpStatus status = resolveStatus(ex);
@@ -45,23 +59,7 @@ public class GlobalExceptionHandler {
                 errors
         );
 
-        System.out.print(error.getDetails());
-
         return ResponseEntity.badRequest().body(error);
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGeneric(Exception ex) {
-
-        ErrorResponse error = new ErrorResponse(
-                LocalDateTime.now(),
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                "INTERNAL_ERROR",
-                "Ocorreu um erro inesperado. Tente novamente.",
-                ex.getMessage()
-        );
-
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 
     private HttpStatus resolveStatus(BusinessException ex) {
@@ -83,7 +81,6 @@ public class GlobalExceptionHandler {
     }
 
     private String resolveUserMessage(BusinessException ex) {
-
         if (ex instanceof UnauthorizedException) {
             return "Usuário ou senha inválidos.";
         }
@@ -101,19 +98,19 @@ public class GlobalExceptionHandler {
         }
 
         if(ex instanceof CpfAlreadyRegisteredException) {
-            return "Não foi possível cadastrar esse cpf";
+            return "Já existe um cadastro com esse CPF.";
         }
 
         if(ex instanceof EmailAlreadyRegisteredException) {
-            return "Não foi possível cadastrar esse e-mail";
+            return "Já existe um cadastro com esse E-mail.";
         }
 
         if(ex instanceof PhoneAlreadyRegisteredException) {
-            return "Não foi possível cadastrar esse telefone";
+            return "Já existe um cadastro com esse Telefone.";
         }
 
         if(ex instanceof AddressAlreadyRegisteredException) {
-            return "Não foi possível cadastrar esse endereço";
+            return "Já existe um cadastro com esse Endereço.";
         }
 
         return "Não foi possível processar a solicitação.";

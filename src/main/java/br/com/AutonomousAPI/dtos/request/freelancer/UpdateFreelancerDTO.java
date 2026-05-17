@@ -6,37 +6,37 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
-public class CreateFreelancerDTO {
+public class UpdateFreelancerDTO {
 
     @NotNull(message = "O gestor responsável deve ser informado.")
     @Positive(message = "O ID do gestor informado é inválido.")
     private Long managerId;
 
-    @NotBlank(message = "O CPF do freelancer deve ser informado.")
-    @Pattern(regexp = "\\d{11}", message = "O CPF deve conter exatamente 11 números, sem pontos ou traços.")
-    private String cpf;
+    @NotNull(message = "O freelancer deve ser informado.")
+    @Positive(message = "O ID do freelancer informado é inválido.")
+    private Long freelancerId;
 
     @NotBlank(message = "O nome completo do freelancer deve ser informado.")
     private String name;
-
-    @NotBlank(message = "O e-mail do freelancer deve ser informado.")
-    @Email(message = "O e-mail informado é inválido. Exemplo: usuario@email.com")
-    private String email;
 
     @NotBlank(message = "O telefone do freelancer deve ser informado.")
     @Pattern(regexp = "\\d{11}", message = "O telefone deve conter DDD e número, totalizando 11 dígitos.")
     private String phone;
 
-    public CreateFreelancerDTO() {
+    @NotBlank(message = "O e-mail do freelancer deve ser informado.")
+    @Email(message = "O e-mail informado é inválido. Exemplo: usuario@email.com")
+    private String email;
+
+    public UpdateFreelancerDTO() {
 
     }
 
-    public CreateFreelancerDTO(Long managerId, String cpf, String name, String email, String phone) {
+    public UpdateFreelancerDTO(Long managerId, Long freelancerId, String name, String phone, String email) {
         this.managerId = managerId;
-        this.cpf = cpf;
+        this.freelancerId = freelancerId;
         this.name = name;
-        this.email = email;
         this.phone = phone;
+        this.email = email;
     }
 
     public Long getManagerId() {
@@ -47,28 +47,20 @@ public class CreateFreelancerDTO {
         this.managerId = managerId;
     }
 
-    public String getCpf() {
-        return cpf;
+    public Long getFreelancerId() {
+        return freelancerId;
     }
 
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
+    public void setFreelancerId(Long freelancerId) {
+        this.freelancerId = freelancerId;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setNome(String name) {
+    public void setName(String name) {
         this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getPhone() {
@@ -77,5 +69,13 @@ public class CreateFreelancerDTO {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

@@ -18,4 +18,10 @@ public interface FreelancerRepository extends JpaRepository<Freelancer, Long> {
     List<Freelancer> findByActiveTrueOrderByName();
 
     List<Freelancer> findByActiveFalseOrderByName();
+
+    boolean existsByCpfAndIdNot(String cpf, Long id);
+
+    boolean existsByEmailAndIdNot(String email, Long id);
+
+    boolean existsByPhoneAndIdNot(String phone, Long id);
 }

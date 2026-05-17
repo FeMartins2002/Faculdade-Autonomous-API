@@ -1,7 +1,7 @@
 package br.com.AutonomousAPI.services;
 
-import br.com.AutonomousAPI.dtos.request.scale.CreateScaleDTO;
-import br.com.AutonomousAPI.dtos.response.scale.ScaleResponseDTO;
+import br.com.AutonomousAPI.dtos.request.scale.*;
+import br.com.AutonomousAPI.dtos.response.scale.*;
 import br.com.AutonomousAPI.entities.*;
 import br.com.AutonomousAPI.enums.ActionType;
 import br.com.AutonomousAPI.enums.LogStatus;
@@ -39,17 +39,9 @@ public class ScaleService {
     @Autowired
     private LogService logService;
 
-    public List<ScaleResponseDTO> findAll() {
-        List<Scale> scales = scaleRepository.findAll();
-        return scaleMapper.toResponseList(scales);
-    }
-
-    public List<ScaleResponseDTO> findByStatus(ScaleStatus status) {
-        return scaleMapper.toResponseList(scaleRepository.findByScaleStatus(status));
-    }
-
     public ScaleResponseDTO createScale(CreateScaleDTO dto) {
         //validateScale(dto);
+
         Manager manager = findByManager(dto.getManagerId());
         Freelancer freelancer = findByFreelancer(dto.getFreelancerId());
         Store store = findByStore(dto.getStoreId());
@@ -58,8 +50,64 @@ public class ScaleService {
         scale.setScaleStatus(ScaleStatus.CRIADO);
 
         scaleRepository.save(scale);
-        createLog(ActionType.CREATE, "Scale", scale.getId(), manager.getId(), "Scale criada com sucesso", LogStatus.SUCCESS);
+        createLog(ActionType.CREATE, "Scale", scale.getId(), manager.getId(), "Escala criada com sucesso", LogStatus.SUCCESS);
         return scaleMapper.toResponse(scale);
+    }
+
+    public ScaleResponseDTO updateScale(UpdateScaleDTO dto) {
+        //validateScale(dto);
+
+        Scale scale = findByScale(dto.getScaleId());
+        Manager manager = findByManager(dto.getManagerId());
+        Store store = findByStore(dto.getStoreId());
+
+        scale.setStartTime(dto.getStartTime());
+        scale.setEndTime(dto.getEndTime());
+        scale.setStore(store);
+        scale.setScaleValue(dto.getScaleValue());
+
+        scaleRepository.save(scale);
+
+        createLog(ActionType.UPDATE, "Scale", scale.getId(), manager.getId(), "Escala atualizada com sucesso", LogStatus.SUCCESS);
+        return scaleMapper.toResponse(scale);
+    }
+
+    public ScaleResponseDTO completedScale(CompletedScaleDTO dto) {
+        //validateScale(dto);
+
+        Manager manager = findByManager(dto.getManagerId());
+        Scale scale = findByScale(dto.getScaleId());
+        scale.setScaleStatus(ScaleStatus.CONCLUIDO);
+
+        scaleRepository.save(scale);
+
+        createLog(ActionType.UPDATE, "Scale", scale.getId(), manager.getId(), "Escala finalizada com sucesso", LogStatus.SUCCESS);
+        return scaleMapper.toResponse(scale);
+    }
+
+    public ScaleResponseDTO cancelledScale(CancelledScaleDTO dto) {
+        //validateScale(dto);
+
+        Manager manager = findByManager(dto.getManagerId());
+        Scale scale = findByScale(dto.getScaleId());
+
+        scale.setScaleStatus(ScaleStatus.CANCELADO);
+        scale.setScaleObservation(dto.getObservation());
+
+        scaleRepository.save(scale);
+
+        createLog(ActionType.UPDATE, "Scale", scale.getId(), manager.getId(), "Escala cancelada com sucesso", LogStatus.SUCCESS);
+        return scaleMapper.toResponse(scale);
+    }
+
+    public List<ScaleResponseDTO> findAll() {
+        List<Scale> scales = scaleRepository.findAll();
+        return scaleMapper.toResponseList(scales);
+    }
+
+    public List<ScaleResponseDTO> findByStatus(ScaleStatus status) {
+        List<Scale> scales = scaleRepository.findByScaleStatus(status);
+        return scaleMapper.toResponseList(scales);
     }
 
     // Pendente implementar validação de Scale
@@ -70,24 +118,32 @@ public class ScaleService {
     private Manager findByManager(Long managerId) {
         return managerRepository.findById(managerId)
                 .orElseThrow(() -> {
-                    createLog(ActionType.CREATE, "Manager", null, null, "Manager não encontrado ao tentar criar scale", LogStatus.ERROR);
-                    return new ManagerNotFoundException("Manager não encontrado");
+                    createLog(ActionType.CREATE, "Manager", null, null, "Gerente não encontrado ao tentar criar escala", LogStatus.ERROR);
+                    return new ManagerNotFoundException("Gerente não encontrado ao tentar criar escala");
                 });
     }
 
     private Freelancer findByFreelancer(Long freelancerId) {
         return freelancerRepository.findById(freelancerId)
                 .orElseThrow(() -> {
-                    createLog(ActionType.CREATE, "Freelancer", null, null, "Freelancer não encontrado ao tentar criar scale", LogStatus.ERROR);
-                    return new FreelancerNotFoundException("Freelancer não encontrado");
+                    createLog(ActionType.CREATE, "Freelancer", null, null, "Freelancer não encontrado ao tentar criar escala", LogStatus.ERROR);
+                    return new FreelancerNotFoundException("Freelancer não encontrado ao tentar criar escala");
                 });
     }
 
     private Store findByStore(Long storeId) {
         return storeRepository.findById(storeId)
                 .orElseThrow(() -> {
-                    createLog(ActionType.CREATE, "Store", null, null, "Store não encontrado ao tentar criar scale", LogStatus.ERROR);
-                    return new StoreNotFoundException("Store não encontrado");
+                    createLog(ActionType.CREATE, "Store", null, null, "Loja não encontrado ao tentar criar escala", LogStatus.ERROR);
+                    return new StoreNotFoundException("Loja não encontrado ao tentar criar escala");
+                });
+    }
+
+    private Scale findByScale(Long scaleId) {
+        return scaleRepository.findById(scaleId)
+                .orElseThrow(() -> {
+                    createLog(ActionType.CREATE, "Store", null, null, "Escala não encontrada", LogStatus.ERROR);
+                    return new StoreNotFoundException("Escala não encontrada");
                 });
     }
 

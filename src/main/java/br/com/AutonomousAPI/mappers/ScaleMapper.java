@@ -13,14 +13,6 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface ScaleMapper {
-    @Mapping(source = "freelancer.name", target = "freelancerName")
-    @Mapping(source = "manager.name", target = "managerName")
-    @Mapping(source = "store.name", target = "storeName")
-    @Mapping(source = "points", target = "points")
-    ScaleResponseDTO toResponse(Scale scale);
-
-    List<ScaleResponseDTO> toResponseList(List<Scale> scales);
-
     @Mapping(target = "scaleStatus", ignore = true)
     @Mapping(target = "scaleValue", source = "dto.scaleValue")
     @Mapping(target = "scaleDate", source = "dto.scaleDate")
@@ -31,4 +23,12 @@ public interface ScaleMapper {
     @Mapping(target = "manager", source = "manager")
     @Mapping(target = "store", source = "store")
     Scale toEntity(CreateScaleDTO dto, Manager manager, Freelancer freelancer, Store store);
+
+    @Mapping(source = "freelancer.name", target = "freelancerName")
+    @Mapping(source = "manager.name", target = "managerName")
+    @Mapping(source = "store.name", target = "storeName")
+    @Mapping(source = "points", target = "points")
+    ScaleResponseDTO toResponse(Scale scale);
+
+    List<ScaleResponseDTO> toResponseList(List<Scale> scales);
 }
