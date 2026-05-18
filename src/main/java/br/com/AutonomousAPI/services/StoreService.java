@@ -7,6 +7,7 @@ import br.com.AutonomousAPI.entities.Manager;
 import br.com.AutonomousAPI.entities.Store;
 import br.com.AutonomousAPI.enums.ActionType;
 import br.com.AutonomousAPI.enums.LogStatus;
+import br.com.AutonomousAPI.enums.Role;
 import br.com.AutonomousAPI.exceptions.*;
 import br.com.AutonomousAPI.mappers.StoreMapper;
 import br.com.AutonomousAPI.repositories.ManagerRepository;
@@ -31,9 +32,9 @@ public class StoreService {
     private LogService logService;
 
     public StoreResponseDTO createStore(CreateStoreDTO dto) {
-        validateStore(dto);
-
         Manager manager = findByManager(dto.getManagerId());
+        validateAuthorization(manager, ActionType.CREATE);
+        validateStore(dto);
 
         Store store = storeMapper.toEntity(dto, manager);
         store.setActive(true);
@@ -44,9 +45,10 @@ public class StoreService {
     }
 
     public StoreResponseDTO updateStore(UpdateStoreDTO dto) {
+        Manager manager = findByManager(dto.getManagerId());
+        validateAuthorization(manager, ActionType.UPDATE);
         validateStore(dto);
 
-        Manager manager = findByManager(dto.getManagerId());
         Store store = findByStore(dto.getStoreId());
 
         store.setName(dto.getName());
@@ -61,6 +63,8 @@ public class StoreService {
 
     public StoreResponseDTO deleteStore(DeleteStoreDTO dto) {
         Manager manager = findByManager(dto.getManagerId());
+        validateAuthorization(manager, ActionType.DELETE);
+
         Store store = findByStore(dto.getStoreId());
 
         if (!store.isActive()) {
@@ -114,6 +118,13 @@ public class StoreService {
 
     private boolean validateAddress(String address) {
         return storeRepository.findByAddress(address).isPresent();
+    }
+
+    private void validateAuthorization(Manager manager, ActionType actionType) {
+        if (manager.getRole() != Role.ROLE_MANAGER) {
+            createLog(actionType, "Store", null, manager.getId(), "Usuário sem permissão para realizar esta ação", LogStatus.ERROR);
+            throw new AccessDeniedException("Usuário sem permissão para realizar esta ação");
+        }
     }
 
     private Manager findByManager(Long managerId) {

@@ -19,6 +19,9 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
 
+import static br.com.AutonomousAPI.services.utils.Hash.generateHash;
+import static br.com.AutonomousAPI.services.utils.PasswordGenerator.generateDefaultPassword;
+
 @Service
 public class InitializeDB implements CommandLineRunner {
     @Autowired
@@ -37,11 +40,11 @@ public class InitializeDB implements CommandLineRunner {
     public void run(String... args) throws Exception {
 
         // Inicializa quantidade para testes de sobrecarga
-        int totalStores = 50;
-        int totalFreelancers = 100;
-        int totalScaleCompleted = 100;
-        int totalScaleCreated = 100;
-        int totalScaleCancelled = 100;
+        int totalStores = 1;
+        int totalFreelancers = 3;
+        int totalScaleCompleted = 2;
+        int totalScaleCreated = 2;
+        int totalScaleCancelled = 2;
 
 
         Faker faker = new Faker(new Locale("pt-BR"));
@@ -49,8 +52,8 @@ public class InitializeDB implements CommandLineRunner {
 
         //============================== Initialize Managers ==============================//
 
-        Manager manager1 = new Manager("Felipe", "felipe123@gmail.com", "11967762246", "123", Role.ROLE_MANAGER);
-        Manager manager2 = new Manager("Marcelo", "marcelo123@gmail.com", "11973218523", "123", Role.ROLE_USER);
+        Manager manager1 = new Manager("Felipe", "felipe123@gmail.com", "11967762246", generateHash("123"), Role.ROLE_MANAGER);
+        Manager manager2 = new Manager("Marcelo", "marcelo123@gmail.com", "11973218523", generateHash("321"), Role.ROLE_USER);
 
         managerRepository.saveAll(Arrays.asList(manager1, manager2));
 
@@ -88,7 +91,7 @@ public class InitializeDB implements CommandLineRunner {
                     faker.name().firstName(),
                     faker.internet().emailAddress(),
                     faker.phoneNumber().cellPhone(),
-                    "123",
+                    generateHash(generateDefaultPassword()),
                     manager1
             );
             freelancers.add(freelancer);

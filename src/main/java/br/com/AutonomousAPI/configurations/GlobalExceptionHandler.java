@@ -66,6 +66,10 @@ public class GlobalExceptionHandler {
         if (ex instanceof UnauthorizedException)
             return HttpStatus.UNAUTHORIZED;
 
+        if(ex instanceof AccessDeniedException) {
+            return HttpStatus.FORBIDDEN;
+        }
+
         if (ex instanceof FreelancerNotFoundException
                 || ex instanceof ManagerNotFoundException
                 || ex instanceof StoreNotFoundException)
@@ -83,6 +87,10 @@ public class GlobalExceptionHandler {
     private String resolveUserMessage(BusinessException ex) {
         if (ex instanceof UnauthorizedException) {
             return "Usuário ou senha inválidos.";
+        }
+
+        if(ex instanceof AccessDeniedException) {
+            return "Você não possui permissão para realizar esta ação.";
         }
 
         if (ex instanceof ManagerNotFoundException) {

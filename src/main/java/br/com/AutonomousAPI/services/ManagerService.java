@@ -13,6 +13,8 @@ import br.com.AutonomousAPI.repositories.ManagerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static br.com.AutonomousAPI.services.utils.Hash.generateHash;
+
 @Service
 public class ManagerService {
     @Autowired
@@ -27,7 +29,7 @@ public class ManagerService {
     public ManagerResponseDTO login(LoginManagerDTO dto) {
             Manager manager = findByEmail(dto.getEmail());
 
-            if (!manager.getPassword().equals(dto.getPassword())) {
+            if (!manager.getPassword().equals(generateHash(dto.getPassword()))) {
                 createLog(ActionType.LOGIN, manager.getId(), "Credenciais inválidas", LogStatus.ERROR);
                 throw new UnauthorizedException("Senha incorreta");
             }

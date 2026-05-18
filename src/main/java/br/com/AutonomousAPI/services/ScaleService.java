@@ -5,7 +5,9 @@ import br.com.AutonomousAPI.dtos.response.scale.*;
 import br.com.AutonomousAPI.entities.*;
 import br.com.AutonomousAPI.enums.ActionType;
 import br.com.AutonomousAPI.enums.LogStatus;
+import br.com.AutonomousAPI.enums.Role;
 import br.com.AutonomousAPI.enums.ScaleStatus;
+import br.com.AutonomousAPI.exceptions.AccessDeniedException;
 import br.com.AutonomousAPI.exceptions.FreelancerNotFoundException;
 import br.com.AutonomousAPI.exceptions.ManagerNotFoundException;
 import br.com.AutonomousAPI.exceptions.StoreNotFoundException;
@@ -40,9 +42,10 @@ public class ScaleService {
     private LogService logService;
 
     public ScaleResponseDTO createScale(CreateScaleDTO dto) {
+        Manager manager = findByManager(dto.getManagerId());
+        validateAuthorization(manager, ActionType.CREATE);
         //validateScale(dto);
 
-        Manager manager = findByManager(dto.getManagerId());
         Freelancer freelancer = findByFreelancer(dto.getFreelancerId());
         Store store = findByStore(dto.getStoreId());
 
@@ -55,10 +58,11 @@ public class ScaleService {
     }
 
     public ScaleResponseDTO updateScale(UpdateScaleDTO dto) {
+        Manager manager = findByManager(dto.getManagerId());
+        validateAuthorization(manager, ActionType.UPDATE);
         //validateScale(dto);
 
         Scale scale = findByScale(dto.getScaleId());
-        Manager manager = findByManager(dto.getManagerId());
         Store store = findByStore(dto.getStoreId());
 
         scale.setStartTime(dto.getStartTime());
@@ -73,9 +77,10 @@ public class ScaleService {
     }
 
     public ScaleResponseDTO completedScale(CompletedScaleDTO dto) {
+        Manager manager = findByManager(dto.getManagerId());
+        validateAuthorization(manager, ActionType.UPDATE);
         //validateScale(dto);
 
-        Manager manager = findByManager(dto.getManagerId());
         Scale scale = findByScale(dto.getScaleId());
         scale.setScaleStatus(ScaleStatus.CONCLUIDO);
 
@@ -86,9 +91,10 @@ public class ScaleService {
     }
 
     public ScaleResponseDTO cancelledScale(CancelledScaleDTO dto) {
+        Manager manager = findByManager(dto.getManagerId());
+        validateAuthorization(manager, ActionType.UPDATE);
         //validateScale(dto);
 
-        Manager manager = findByManager(dto.getManagerId());
         Scale scale = findByScale(dto.getScaleId());
 
         scale.setScaleStatus(ScaleStatus.CANCELADO);
@@ -113,6 +119,13 @@ public class ScaleService {
     // Pendente implementar validação de Scale
     private void validateScale(CreateScaleDTO dto) {
 
+    }
+
+    private void validateAuthorization(Manager manager, ActionType actionType) {
+        if (manager.getRole() != Role.ROLE_MANAGER) {
+            createLog(actionType, "Freelancer", null, manager.getId(), "Usuário sem permissão para realizar esta ação", LogStatus.ERROR);
+            throw new AccessDeniedException("Usuário sem permissão para realizar esta ação");
+        }
     }
 
     private Manager findByManager(Long managerId) {

@@ -7,6 +7,7 @@ import br.com.AutonomousAPI.entities.Log;
 import br.com.AutonomousAPI.entities.Manager;
 import br.com.AutonomousAPI.enums.ActionType;
 import br.com.AutonomousAPI.enums.LogStatus;
+import br.com.AutonomousAPI.enums.Role;
 import br.com.AutonomousAPI.exceptions.*;
 import br.com.AutonomousAPI.mappers.FreelancerMapper;
 import br.com.AutonomousAPI.repositories.FreelancerRepository;
@@ -16,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static br.com.AutonomousAPI.services.utils.Hash.generateHash;
 
 @Service
 public class FreelancerService {
@@ -32,10 +35,11 @@ public class FreelancerService {
     private LogService logService;
 
     public FreelancerResponseDTO createFreelancer(CreateFreelancerDTO dto) {
+        Manager manager = findByManager(dto.getManagerId());
+        validateAuthorization(manager, ActionType.CREATE);
         validateFreelancer(dto);
 
-        Manager manager = findByManager(dto.getManagerId());
-        String generatedPassword = PasswordGenerator.generateDefaultPassword();
+        String generatedPassword = generateHash(PasswordGenerator.generateDefaultPassword());
 
         Freelancer freelancer = freelancerMapper.toEntity(dto, manager, generatedPassword);
         freelancer.setActive(true);
@@ -46,10 +50,11 @@ public class FreelancerService {
     }
 
     public FreelancerResponseDTO updateFreelancer(UpdateFreelancerDTO dto) {
+        Manager manager = findByManager(dto.getManagerId());
+        validateAuthorization(manager, ActionType.UPDATE);
         validateFreelancer(dto);
 
         Freelancer freelancer = findByFreelancer(dto.getFreelancerId());
-        Manager manager = findByManager(dto.getManagerId());
 
         freelancer.setName(dto.getName());
         freelancer.setPhone(dto.getPhone());
@@ -63,6 +68,8 @@ public class FreelancerService {
 
     public FreelancerResponseDTO deleteFreelancer(DeleteFreelancerDTO dto) {
         Manager manager = findByManager(dto.getManagerId());
+        validateAuthorization(manager, ActionType.DELETE);
+
         Freelancer freelancer = findByFreelancer(dto.getFreelancerId());
 
         if (!freelancer.isActive()) {
@@ -129,6 +136,13 @@ public class FreelancerService {
 
     private boolean validatePhone(String phone) {
         return freelancerRepository.findByPhone(phone).isPresent();
+    }
+
+    private void validateAuthorization(Manager manager, ActionType actionType) {
+        if (manager.getRole() != Role.ROLE_MANAGER) {
+            createLog(actionType, "Freelancer", null, manager.getId(), "Usuário sem permissão para realizar esta ação", LogStatus.ERROR);
+            throw new AccessDeniedException("Usuário sem permissão para realizar esta ação");
+        }
     }
 
     private Manager findByManager(Long managerId) {
