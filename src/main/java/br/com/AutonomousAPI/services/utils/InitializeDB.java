@@ -40,11 +40,11 @@ public class InitializeDB implements CommandLineRunner {
     public void run(String... args) throws Exception {
 
         // Inicializa quantidade para testes de sobrecarga
-        int totalStores = 1;
-        int totalFreelancers = 3;
-        int totalScaleCompleted = 2;
-        int totalScaleCreated = 2;
-        int totalScaleCancelled = 2;
+        int totalStores = 4;
+        int totalFreelancers = 15;
+        int totalScaleCompleted = 987;
+        int totalScaleCreated = 47;
+        int totalScaleCancelled = 322;
 
 
         Faker faker = new Faker(new Locale("pt-BR"));
@@ -115,7 +115,7 @@ public class InitializeDB implements CommandLineRunner {
 
         Scale scale2 = new Scale(
                 200,
-                LocalDate.parse("2026-08-21"),
+                LocalDate.parse("2026-05-18"),
                 LocalTime.parse("13:00"),
                 LocalTime.parse("22:00"),
                 freelancer1,
@@ -143,18 +143,20 @@ public class InitializeDB implements CommandLineRunner {
         // CONCLUIDO
         for (int i = 0; i < totalScaleCompleted; i++) {
 
-            LocalTime startTime = LocalTime.of(
-                    faker.number().numberBetween(7, 10),
-                    0
-            );
+            int mouth = random.nextInt(1, 6);
+            String mouthText = String.valueOf(mouth);
 
-            LocalTime endTime = startTime.plusHours(8);
+            int day = random.nextInt(10, 19);
+            String dayText = String.valueOf(day);
+
+            int year = random.nextInt(25, 27);
+            String yearText = String.valueOf(year);
 
             Scale scale = new Scale(
                     faker.number().numberBetween(100, 300),
-                    LocalDate.now().minusDays(random.nextInt(30)),
-                    startTime,
-                    endTime,
+                    LocalDate.parse("20" + yearText + "-0" + mouthText + "-" + dayText),
+                    LocalTime.parse("08:00"),
+                    LocalTime.parse("17:00"),
                     freelancers.get(random.nextInt(freelancers.size())),
                     manager1,
                     stores.get(random.nextInt(stores.size()))
