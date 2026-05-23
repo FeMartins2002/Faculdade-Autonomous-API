@@ -17,6 +17,8 @@ import java.util.List;
 public interface ScaleRepository extends JpaRepository<Scale, Long> {
     List<Scale> findByScaleStatus(ScaleStatus status);
 
+    List<Scale> findByScaleStatusIn(List<ScaleStatus> statuses);
+
     Scale findByScaleDateBetweenAndFreelancerEmailAndScaleStatus(
             LocalDate start,
             LocalDate end,

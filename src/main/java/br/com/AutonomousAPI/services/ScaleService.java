@@ -116,6 +116,21 @@ public class ScaleService {
         return scaleMapper.toResponseList(scales);
     }
 
+    public List<ScaleResponseDTO> findByScalesClosed() {
+        List<Scale> scales = scaleRepository.findByScaleStatusIn(List.of(ScaleStatus.CONCLUIDO, ScaleStatus.CANCELADO));
+        return scaleMapper.toResponseList(scales);
+    }
+
+    public ObservationResponse findObservationById(Long id) {
+        Scale scale = findByScale(id);
+
+        return switch (scale.getScaleStatus()) {
+            case CONCLUIDO -> new ObservationResponse(id, "Escala concluída com sucesso");
+            case CANCELADO ->  new ObservationResponse(id, scale.getScaleObservation());
+            default -> new ObservationResponse(id, "Escala em andamento");
+        };
+    }
+
     // Pendente implementar validação de Scale
     private void validateScale(CreateScaleDTO dto) {
 

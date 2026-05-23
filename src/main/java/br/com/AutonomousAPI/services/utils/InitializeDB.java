@@ -211,6 +211,7 @@ public class InitializeDB implements CommandLineRunner {
             );
 
             scale.setScaleStatus(ScaleStatus.CANCELADO);
+            scale.setScaleObservation("Freelancer Desistiu: " + scale.getFreelancer().getName());
             scales.add(scale);
         }
 

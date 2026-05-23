@@ -46,4 +46,16 @@ public class ScaleController {
         List<ScaleResponseDTO> scales = scaleService.findByStatus(status);
         return ResponseEntity.ok(scales);
     }
+
+    @GetMapping("/closed")
+    public ResponseEntity<List<ScaleResponseDTO>> getAllScales() {
+        List<ScaleResponseDTO> scales = scaleService.findByScalesClosed();
+        return ResponseEntity.ok(scales);
+    }
+
+    @GetMapping("/observation/{id}")
+    public ResponseEntity<ObservationResponse> getScaleObservation(@PathVariable Long id) {
+        ObservationResponse observation = scaleService.findObservationById(id);
+        return ResponseEntity.ok(observation);
+    }
 }
