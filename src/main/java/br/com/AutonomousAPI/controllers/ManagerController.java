@@ -19,4 +19,16 @@ public class ManagerController {
         ManagerResponseDTO response = managerService.login(loginDTO);
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/password")
+    public ResponseEntity<ManagerResponseDTO> changePassword(@RequestBody @Valid ChangePasswordDTO dto) {
+        ManagerResponseDTO response = managerService.changePassword(dto);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/token")
+    public ResponseEntity<TokenResponse> changePassword(@RequestParam String email) {
+        TokenResponse token = managerService.validateToken(email);
+        return ResponseEntity.ok(token);
+    }
 }

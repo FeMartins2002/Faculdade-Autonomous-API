@@ -1,24 +1,18 @@
 package br.com.AutonomousAPI.dtos.request.manager;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-
-public class LoginManagerDTO {
-
-    @NotBlank(message = "O e-mail de acesso deve ser informado.")
-    @Email(message = "O e-mail informado é inválido. Exemplo: usuario@email.com")
+public class ChangePasswordDTO {
     private String email;
-
-    @NotBlank(message = "A senha de acesso deve ser informada.")
     private String password;
+    private String repeatPassword;
 
-    public LoginManagerDTO() {
+    public ChangePasswordDTO() {
 
     }
 
-    public LoginManagerDTO(String email, String password) {
+    public ChangePasswordDTO(String email, String password, String repeatPassword) {
         this.email = email;
         this.password = password;
+        this.repeatPassword = repeatPassword;
     }
 
     public String getEmail() {
@@ -35,5 +29,13 @@ public class LoginManagerDTO {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRepeatPassword() {
+        return repeatPassword;
+    }
+
+    public void setRepeatPassword(String repeatPassword) {
+        this.repeatPassword = repeatPassword;
     }
 }

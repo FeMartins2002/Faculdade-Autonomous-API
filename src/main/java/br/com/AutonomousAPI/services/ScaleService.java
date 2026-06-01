@@ -7,10 +7,7 @@ import br.com.AutonomousAPI.enums.ActionType;
 import br.com.AutonomousAPI.enums.LogStatus;
 import br.com.AutonomousAPI.enums.Role;
 import br.com.AutonomousAPI.enums.ScaleStatus;
-import br.com.AutonomousAPI.exceptions.AccessDeniedException;
-import br.com.AutonomousAPI.exceptions.FreelancerNotFoundException;
-import br.com.AutonomousAPI.exceptions.ManagerNotFoundException;
-import br.com.AutonomousAPI.exceptions.StoreNotFoundException;
+import br.com.AutonomousAPI.exceptions.*;
 import br.com.AutonomousAPI.mappers.ScaleMapper;
 import br.com.AutonomousAPI.repositories.FreelancerRepository;
 import br.com.AutonomousAPI.repositories.ManagerRepository;
@@ -19,6 +16,7 @@ import br.com.AutonomousAPI.repositories.StoreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -111,6 +109,23 @@ public class ScaleService {
         return scaleMapper.toResponseList(scales);
     }
 
+    public ScaleResponseDTO findScaleByEmail(String email) {
+        LocalDate today = LocalDate.now();
+
+        Scale scale = scaleRepository
+                .findByScaleDateBetweenAndFreelancerEmailAndScaleStatus(
+                        today,
+                        today,
+                        email,
+                        ScaleStatus.CRIADO
+                );
+
+        if (scale == null) {
+            throw new ScaleNotFoundForToday("Nenhuma escala encontrada para hoje");
+        }
+
+        return scaleMapper.toResponse(scale);
+    }
     public List<ScaleResponseDTO> findByStatus(ScaleStatus status) {
         List<Scale> scales = scaleRepository.findByScaleStatus(status);
         return scaleMapper.toResponseList(scales);

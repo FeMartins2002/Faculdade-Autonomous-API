@@ -1,6 +1,7 @@
 package br.com.AutonomousAPI.controllers;
 
 import br.com.AutonomousAPI.dtos.request.freelancer.*;
+import br.com.AutonomousAPI.dtos.request.manager.ChangePasswordDTO;
 import br.com.AutonomousAPI.dtos.response.freelancer.*;
 import br.com.AutonomousAPI.services.FreelancerService;
 import jakarta.validation.Valid;
@@ -15,6 +16,18 @@ import java.util.List;
 public class FreelancerController {
     @Autowired
     private FreelancerService freelancerService;
+
+    @PostMapping("/login")
+    public ResponseEntity<FreelancerResponseDTO> login(@RequestBody @Valid LoginFreelancerDTO loginDTO) {
+        FreelancerResponseDTO response = freelancerService.login(loginDTO);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/password")
+    public ResponseEntity<FreelancerResponseDTO> chagePassword(@RequestBody @Valid ChangePasswordDTO dto) {
+        FreelancerResponseDTO response = freelancerService.changePassword(dto);
+        return ResponseEntity.ok(response);
+    }
 
     @PostMapping
     public ResponseEntity<FreelancerResponseDTO> createFreelancer(@RequestBody @Valid CreateFreelancerDTO dto) {

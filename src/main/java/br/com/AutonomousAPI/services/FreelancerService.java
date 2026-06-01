@@ -1,6 +1,7 @@
 package br.com.AutonomousAPI.services;
 
 import br.com.AutonomousAPI.dtos.request.freelancer.*;
+import br.com.AutonomousAPI.dtos.request.manager.ChangePasswordDTO;
 import br.com.AutonomousAPI.dtos.response.freelancer.*;
 import br.com.AutonomousAPI.entities.Freelancer;
 import br.com.AutonomousAPI.entities.Log;
@@ -12,7 +13,7 @@ import br.com.AutonomousAPI.exceptions.*;
 import br.com.AutonomousAPI.mappers.FreelancerMapper;
 import br.com.AutonomousAPI.repositories.FreelancerRepository;
 import br.com.AutonomousAPI.repositories.ManagerRepository;
-import br.com.AutonomousAPI.services.utils.PasswordGenerator;
+import br.com.AutonomousAPI.services.utils.Generator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,13 +35,34 @@ public class FreelancerService {
     @Autowired
     private LogService logService;
 
+    public FreelancerResponseDTO login(LoginFreelancerDTO loginDTO) {
+        Freelancer freelancer = findByFreelancer(loginDTO.getEmail());
+
+        if (!freelancer.getPassword().equals(generateHash(loginDTO.getPassword()))) {
+            createLog(ActionType.LOGIN, "Freelancer", null, freelancer.getId(), "Credenciais inválidas", LogStatus.ERROR);
+            throw new UnauthorizedException("Senha incorreta");
+        }
+
+        createLog(ActionType.LOGIN, "Freelancer", null, freelancer.getId(), "Login realizado com sucesso", LogStatus.SUCCESS);
+
+        return freelancerMapper.toResponse(freelancer);
+    }
+
+    public FreelancerResponseDTO changePassword(ChangePasswordDTO dto) {
+        validateFreelancer(dto);
+        Freelancer freelancer = findByFreelancer(dto.getEmail());
+        freelancer.setPassword(generateHash(dto.getPassword()));
+
+        freelancerRepository.save(freelancer);
+        return freelancerMapper.toResponse(freelancer);
+    }
+
     public FreelancerResponseDTO createFreelancer(CreateFreelancerDTO dto) {
         Manager manager = findByManager(dto.getManagerId());
         validateAuthorization(manager, ActionType.CREATE);
         validateFreelancer(dto);
 
-        String generatedPassword = generateHash(PasswordGenerator.generateDefaultPassword());
-
+        String generatedPassword = generateHash(Generator.generateDefaultPassword());
         Freelancer freelancer = freelancerMapper.toEntity(dto, manager, generatedPassword);
         freelancer.setActive(true);
 
@@ -55,13 +77,11 @@ public class FreelancerService {
         validateFreelancer(dto);
 
         Freelancer freelancer = findByFreelancer(dto.getFreelancerId());
-
         freelancer.setName(dto.getName());
         freelancer.setPhone(dto.getPhone());
         freelancer.setEmail(dto.getEmail());
 
         freelancerRepository.save(freelancer);
-
         createLog(ActionType.UPDATE ,"Freelancer", freelancer.getId(), manager.getId(), "Freelancer atualizado com sucesso.", LogStatus.SUCCESS);
         return freelancerMapper.toResponse(freelancer);
     }
@@ -126,6 +146,16 @@ public class FreelancerService {
         }
     }
 
+    private void validateFreelancer(ChangePasswordDTO dto) {
+        if(dto.getEmail() == null || dto.getPassword() == null || dto.getRepeatPassword() == null) {
+            throw new IllegalArgumentException("Alteração de senha com dados inválidos");
+        }
+
+        if(!dto.getPassword().equals(dto.getRepeatPassword())) {
+            throw new PasswordsDoNotMatchException("As senhas não coincidem");
+        }
+    }
+
     private boolean validateCpf(String cpf) {
         return freelancerRepository.findByCpf(cpf).isPresent();
     }
@@ -157,6 +187,14 @@ public class FreelancerService {
         return freelancerRepository.findById(freelancerId)
                 .orElseThrow(() -> {
                     createLog(ActionType.UPDATE, "Freelancer", freelancerId, null, "Freelancer não encontrado ao tentar atualizar", LogStatus.ERROR);
+                    return new FreelancerNotFoundException("Freelancer não encontrado ao tentar atualizar");
+                });
+    }
+
+    private Freelancer findByFreelancer(String freelancerEmail) {
+        return freelancerRepository.findByEmail(freelancerEmail)
+                .orElseThrow(() -> {
+                    createLog(ActionType.LOGIN, "Freelancer", null, null, "Freelancer não encontrado ao tentar fazer login", LogStatus.ERROR);
                     return new FreelancerNotFoundException("Freelancer não encontrado ao tentar atualizar");
                 });
     }

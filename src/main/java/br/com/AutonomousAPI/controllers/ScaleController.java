@@ -41,6 +41,12 @@ public class ScaleController {
         return ResponseEntity.ok(scale);
     }
 
+    @GetMapping("/{email}")
+    public ResponseEntity<ScaleResponseDTO> getScaleByEmail(@PathVariable String email) {
+        ScaleResponseDTO scale = scaleService.findScaleByEmail(email);
+        return ResponseEntity.ok(scale);
+    }
+
     @GetMapping
     public ResponseEntity<List<ScaleResponseDTO>> getScalesByStatus(@RequestParam ScaleStatus status) {
         List<ScaleResponseDTO> scales = scaleService.findByStatus(status);

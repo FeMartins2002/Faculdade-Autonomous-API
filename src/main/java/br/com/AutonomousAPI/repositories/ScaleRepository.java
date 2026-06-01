@@ -28,43 +28,59 @@ public interface ScaleRepository extends JpaRepository<Scale, Long> {
 
     // CONSULTA TOTAL DE CONSULTAS CONCLUIDAS E CANCELADAS
     @Query("""
-        SELECT new br.com.AutonomousAPI.dtos.response.dashboard.ScaleStatusCountDTO(s.scaleStatus,COUNT(s))
+        SELECT new br.com.AutonomousAPI.dtos.response.dashboard.ScaleStatusCountDTO(
+            s.scaleStatus,
+            COUNT(s)
+        )
         FROM Scale s
         WHERE s.scaleStatus IN (
             br.com.AutonomousAPI.enums.ScaleStatus.CANCELADO,
             br.com.AutonomousAPI.enums.ScaleStatus.CONCLUIDO
         )
-        GROUP BY s.scaleStatus""")
-    List<ScaleStatusCountDTO> getScaleStatistics();
+        AND YEAR(s.scaleDate) = :year
+        GROUP BY s.scaleStatus
+    """)
+    List<ScaleStatusCountDTO> getScaleStatistics(int year);
 
     // CONSULTA FREELANCES COM MAIS ESCALAS CONCLUIDAS
     @Query("""
-    SELECT new br.com.AutonomousAPI.dtos.response.dashboard.FreelancerRankingDTO(s.freelancer.name, COUNT(s))
-    FROM Scale s
-    WHERE s.scaleStatus = br.com.AutonomousAPI.enums.ScaleStatus.CONCLUIDO
-    GROUP BY s.freelancer.id, s.freelancer.name
-    ORDER BY COUNT(s) DESC""")
-    List<FreelancerRankingDTO> getTopFreelancerScales(Pageable pageable);
+        SELECT new br.com.AutonomousAPI.dtos.response.dashboard.FreelancerRankingDTO(
+            s.freelancer.name,
+            COUNT(s)
+        )
+        FROM Scale s
+        WHERE s.scaleStatus = br.com.AutonomousAPI.enums.ScaleStatus.CONCLUIDO
+        AND YEAR(s.scaleDate) = :year
+        GROUP BY s.freelancer.id, s.freelancer.name
+        ORDER BY COUNT(s) DESC
+    """)
+    List<FreelancerRankingDTO> getTopFreelancerScales(int year, Pageable pageable);
 
     // CONSULTA FREELANCES COM MAIS VALOR RECEBIDO
     @Query("""
-    SELECT new br.com.AutonomousAPI.dtos.response.dashboard.FreelancerCostDTO(s.freelancer.name, SUM(s.scaleValue))
-    FROM Scale s
-    WHERE s.scaleStatus = br.com.AutonomousAPI.enums.ScaleStatus.CONCLUIDO
-    GROUP BY s.freelancer.id, s.freelancer.name
-    ORDER BY SUM(s.scaleValue) DESC""")
-    List<FreelancerCostDTO> getTopFreelancerPayments(Pageable pageable);
+        SELECT new br.com.AutonomousAPI.dtos.response.dashboard.FreelancerCostDTO(
+            s.freelancer.name,
+            SUM(s.scaleValue)
+        )
+        FROM Scale s
+        WHERE s.scaleStatus = br.com.AutonomousAPI.enums.ScaleStatus.CONCLUIDO
+        AND YEAR(s.scaleDate) = :year
+        GROUP BY s.freelancer.id, s.freelancer.name
+        ORDER BY SUM(s.scaleValue) DESC
+    """)
+    List<FreelancerCostDTO> getTopFreelancerPayments(int year, Pageable pageable);
 
     // TOTAL DE ESCALAS POR MÊS
     @Query(value = """
-    SELECT 
-        MONTH(scale_date) AS monthNumber,
-        YEAR(scale_date) AS yearNumber,
-        COUNT(*) AS totalScales
-    FROM scale
-    WHERE scale_status = 'CONCLUIDO' AND scale_date >= DATEADD('MONTH', -12, CURRENT_DATE)
-    GROUP BY YEAR(scale_date), MONTH(scale_date)
-    ORDER BY YEAR(scale_date), MONTH(scale_date)
+        SELECT 
+            MONTH(scale_date) AS monthNumber,
+            YEAR(scale_date) AS yearNumber,
+            COUNT(*) AS totalScales
+        FROM scale
+        WHERE scale_status = 'CONCLUIDO'
+        AND YEAR(scale_date) = :year
+        GROUP BY YEAR(scale_date), MONTH(scale_date)
+        ORDER BY MONTH(scale_date)
     """, nativeQuery = true)
-    List<Object[]> getMonthlyScales();
+    List<Object[]> getMonthlyScales(int year);
 }

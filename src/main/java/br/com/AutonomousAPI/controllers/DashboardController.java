@@ -19,23 +19,23 @@ public class DashboardController {
     @Autowired
     private DashboardService dashboardService;
 
+    @GetMapping("/monthly-scales")
+    public List<MonthlyScaleDTO> findMonthlyScalesByYear(@RequestParam int year) {
+        return dashboardService.findMonthlyScalesByYear(year);
+    }
+
     @GetMapping("/scales")
-    public List<ScaleStatusCountDTO> getScaleStatistics() {
-        return dashboardService.getScaleStatistics();
+    public List<ScaleStatusCountDTO> findScalesByYear(@RequestParam int year) {
+        return dashboardService.findScalesByYear(year);
     }
 
     @GetMapping("/top-freelancers-scales")
-    public List<FreelancerRankingDTO> getTopFreelancersScales(@RequestParam(defaultValue = "5") int limit) {
-        return dashboardService.getTopFreelancersScales(limit);
+    public List<FreelancerRankingDTO> findTopFreelancersScalesByYear(@RequestParam int year) {
+        return dashboardService.findTopFreelancersScalesByYear(year);
     }
 
     @GetMapping("/top-freelancers-payments")
-    public List<FreelancerCostDTO> getTopFreelancerPayments(@RequestParam(defaultValue = "5") int limit) {
-        return dashboardService.getTopFreelancerPayments(limit);
-    }
-
-    @GetMapping("/monthly-scales")
-    public List<MonthlyScaleDTO> getMonthlyScales() {
-        return dashboardService.getMonthlyScales();
+    public List<FreelancerCostDTO> findTopFreelancersPaymentByYear(@RequestParam int year) {
+        return dashboardService.findTopFreelancersPaymentByYear(year);
     }
 }

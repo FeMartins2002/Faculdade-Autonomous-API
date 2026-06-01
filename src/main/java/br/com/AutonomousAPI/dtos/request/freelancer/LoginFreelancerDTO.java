@@ -1,9 +1,9 @@
-package br.com.AutonomousAPI.dtos.request.manager;
+package br.com.AutonomousAPI.dtos.request.freelancer;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
-public class LoginManagerDTO {
+public class LoginFreelancerDTO {
 
     @NotBlank(message = "O e-mail de acesso deve ser informado.")
     @Email(message = "O e-mail informado é inválido. Exemplo: usuario@email.com")
@@ -12,11 +12,11 @@ public class LoginManagerDTO {
     @NotBlank(message = "A senha de acesso deve ser informada.")
     private String password;
 
-    public LoginManagerDTO() {
+    public LoginFreelancerDTO() {
 
     }
 
-    public LoginManagerDTO(String email, String password) {
+    public LoginFreelancerDTO(String email, String password) {
         this.email = email;
         this.password = password;
     }
